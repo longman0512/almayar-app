@@ -97,13 +97,9 @@ export default function SignUpScreen({navigation}) {
           console.log(res.data, "res data")
           setSendCodeLoading(false)
           if(res.data.status == true){
-            setAlertType("success")
-            setAlertMSG(res.data.msg)
-            setAlertFlag(true)
+            showAlert("success", res.data.msg)
           } else {
-            setAlertType("warning")
-            setAlertMSG(res.data.msg)
-            setAlertFlag(true)
+            showAlert("warning", res.data.msg)
           }
           return res.data;
         }).catch(error=>{
@@ -111,10 +107,8 @@ export default function SignUpScreen({navigation}) {
           alert("Something Error Please contact Admin")
         });
     } else {
-      setAlertType("warning")
-      if(phoneNumber)setAlertMSG("Please insert the Valid Phone Number");
-      else setAlertMSG("Please insert the Phone Number");
-      setAlertFlag(true)
+      if(phoneNumber)showAlert("warning", "Please insert the Valid Phone Number")
+      else showAlert("warning", "Please insert the Phone Number")
     }
   }
 
@@ -136,14 +130,10 @@ export default function SignUpScreen({navigation}) {
         console.log(res.data, "res data in verify code")
         setVerifyCodeLoading(false)
         if(res.data.status == true){
-          setAlertType("success")
-          setAlertMSG(res.data.msg)
-          setAlertFlag(true)
+          showAlert("success", res.data.msg)
           setVerified(true)
         } else {
-          setAlertType("warning")
-          setAlertMSG(res.data.msg)
-          setAlertFlag(true)
+          showAlert("warning", res.data.msg)
         }
         return res.data;
       }).catch(error=>{
@@ -151,9 +141,7 @@ export default function SignUpScreen({navigation}) {
         alert("Something Error Please contact Admin")
       });
     } else {
-      setAlertType("warning")
-      setAlertMSG("Please insert your phone number")
-      setAlertFlag(true)
+      showAlert("warning", "Please insert your phone number")
     }
   }
 
@@ -164,49 +152,43 @@ export default function SignUpScreen({navigation}) {
     data.append("userName", userName)
     data.append("pwd", pwd)
     if(!userName){
-      setAlertType("warning")
-      setAlertMSG("Please insert your user name")
-      setAlertFlag(true)
+      showAlert("warning", "Please insert your user name")
       return false
     }
     if(!verified){
-      setAlertType("warning")
-      setAlertMSG("Please verify your phone number")
-      setAlertFlag(true)
+      showAlert("warning", "Please verify your phone number")
       return false
     }
     if(!pwd || pwd != confirmPwd){
-      setAlertType("warning")
-      setAlertMSG("Please check your password")
-      setAlertFlag(true)
+      showAlert("warning", "Please check your password")
       return false
     }
     data.append('image',
       {
          uri: imageFile,
          name:'userProfile.jpg',
-         type:'image/jpg'
+         type: 'image/jpg', 
       });
-    console.log(uimageFile, "")
-    console.log(data)
-    Axios.post('SignUp', data, {
-      headers: {
-        'content-type': 'multipart/form-data'
-      },
-      onUploadProgress: (progressEvent) => {
-        if (progressEvent.lengthComputable) {
-          setUploadState(progressEvent.loaded/progressEvent.total)
-        }
-     }
-    }).then(res=>{
-      console.log("success")
-      console.log(res.data)
-      setUploadState(0)
-    }).catch(error=>{
-      setUploadState(0)
-      console.log(error, "error")
-      alert("Something Error Please contact Admin")
-    });;
+    Axios.post(
+        "http://192.168.110.121:8000/api/SignUp",
+        data,
+      )
+      .then(res => {
+        console.warn("========================", typeof res.data, res.data)
+        // if(res.data.status){
+          showAlert("success", "Sign up successed!")
+        // } else {
+        //   showAlert("warning", "Sign up failed, try again")
+        // }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+  const showAlert=(type, msg)=>{
+    setAlertType(type)
+    setAlertMSG(msg)
+    setAlertFlag(true)
   }
   return (
     <ScrollView style={Styles.signUpContainer}>
