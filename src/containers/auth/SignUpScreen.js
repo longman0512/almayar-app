@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import Axios from "axios";
 import {
   View,
   Text,
@@ -14,18 +15,38 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import images from '../../res/images';
 import colors from '../../res/colors';
 import {Avatar} from "react-native-elements";
-import { Button, Card, Dialog, Portal } from 'react-native-paper';
+import { ActivityIndicator, Card, Dialog, Portal } from 'react-native-paper';
 import ImagePicker from 'react-native-image-crop-picker';
 import PhoneInput from "react-native-phone-number-input";
-
+import Icon from 'react-native-vector-icons/Feather';
+import {
+  SCLAlert,
+  SCLAlertButton
+} from 'react-native-scl-alert'
 StatusBar.setBarStyle('light-content');
 const windowWidth = Dimensions.get('screen').width;
 
 export default function SignUpScreen({navigation}) {
   const [modal, setModal] = React.useState(false);
   const [imageFile, setImageFile] = React.useState("");
+  const [uimageFile, setuImageFile] = React.useState("");
   const [checkValid, setCheckValid] = React.useState(false);
+  const [alertFlag, setAlertFlag] = React.useState(false);
+  const [alertType, setAlertType] = React.useState("warning");
+  const [alertMsg, setAlertMSG] = React.useState("")
+  const [userName, setUserName] = React.useState("")
+  const [phoneNumber, setPhoneNumber] = React.useState("")
+  const [formatedPhoneNumber, setFPhoneNumber] = React.useState("")
+  const [pVerifyCode, setPVerifyCode] = React.useState("")
+  const [pwd, setPwd] = React.useState("")
+  const [confirmPwd, setConfirmPwd] = React.useState("")
+  const [sendCodeLoading, setSendCodeLoading] = React.useState(false)
+  const [verifyCodeLoading, setVerifyCodeLoading] = React.useState(false)
+  const [verified, setVerified] = React.useState(false)
+  const [loadState, setUploadState] = React.useState(0)
+
   const phoneInput = useRef(null);
+
   const hideDialog =()=>{
     setModal(false)
   }
@@ -41,6 +62,7 @@ export default function SignUpScreen({navigation}) {
     }).then(image => {
       console.log(image);
       setImageFile(image.path)
+      setuImageFile(image)
     });
   }
 
@@ -53,11 +75,152 @@ export default function SignUpScreen({navigation}) {
     }).then(image => {
       console.log(image);
       setImageFile(image.path)
+      setuImageFile(image)
     });
+  }
 
+  const getVerifyCode = () =>{
+    if(checkValid){
+        var data = new FormData();
+        data.append("phoneNumber", formatedPhoneNumber)
+        console.log(data)
+        setSendCodeLoading(true)
+        setVerified(false)
+        Axios({
+          method: "post",
+          url: "getVerifyCode",
+          data,
+          validateStatus: (status) => {
+            return true;
+          },
+        }).then(res=>{
+          console.log(res.data, "res data")
+          setSendCodeLoading(false)
+          if(res.data.status == true){
+            setAlertType("success")
+            setAlertMSG(res.data.msg)
+            setAlertFlag(true)
+          } else {
+            setAlertType("warning")
+            setAlertMSG(res.data.msg)
+            setAlertFlag(true)
+          }
+          return res.data;
+        }).catch(error=>{
+          console.log(error, "error")
+          alert("Something Error Please contact Admin")
+        });
+    } else {
+      setAlertType("warning")
+      if(phoneNumber)setAlertMSG("Please insert the Valid Phone Number");
+      else setAlertMSG("Please insert the Phone Number");
+      setAlertFlag(true)
+    }
+  }
+
+  const phoneVerify = ()=>{
+    if(formatedPhoneNumber){
+      var data = new FormData();
+      data.append("phoneNumber", formatedPhoneNumber)
+      data.append("verifyCode", pVerifyCode)
+      console.log(data)
+      setVerifyCodeLoading(true)
+      Axios({
+        method: "post",
+        url: "phoneVerify",
+        data,
+        validateStatus: (status) => {
+          return true;
+        },
+      }).then(res=>{
+        console.log(res.data, "res data in verify code")
+        setVerifyCodeLoading(false)
+        if(res.data.status == true){
+          setAlertType("success")
+          setAlertMSG(res.data.msg)
+          setAlertFlag(true)
+          setVerified(true)
+        } else {
+          setAlertType("warning")
+          setAlertMSG(res.data.msg)
+          setAlertFlag(true)
+        }
+        return res.data;
+      }).catch(error=>{
+        console.log(error, "error")
+        alert("Something Error Please contact Admin")
+      });
+    } else {
+      setAlertType("warning")
+      setAlertMSG("Please insert your phone number")
+      setAlertFlag(true)
+    }
+  }
+
+  const signUp = ()=>{
+    if(loadState) return false
+    var data = new FormData();
+    data.append("phoneNumber", formatedPhoneNumber);
+    data.append("userName", userName)
+    data.append("pwd", pwd)
+    if(!userName){
+      setAlertType("warning")
+      setAlertMSG("Please insert your user name")
+      setAlertFlag(true)
+      return false
+    }
+    if(!verified){
+      setAlertType("warning")
+      setAlertMSG("Please verify your phone number")
+      setAlertFlag(true)
+      return false
+    }
+    if(!pwd || pwd != confirmPwd){
+      setAlertType("warning")
+      setAlertMSG("Please check your password")
+      setAlertFlag(true)
+      return false
+    }
+    data.append('image',
+      {
+         uri: imageFile,
+         name:'userProfile.jpg',
+         type:'image/jpg'
+      });
+    console.log(uimageFile, "")
+    console.log(data)
+    Axios.post('SignUp', data, {
+      headers: {
+        'content-type': 'multipart/form-data'
+      },
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.lengthComputable) {
+          setUploadState(progressEvent.loaded/progressEvent.total)
+        }
+     }
+    }).then(res=>{
+      console.log("success")
+      console.log(res.data)
+      setUploadState(0)
+    }).catch(error=>{
+      setUploadState(0)
+      console.log(error, "error")
+      alert("Something Error Please contact Admin")
+    });;
   }
   return (
     <ScrollView style={Styles.signUpContainer}>
+      <SCLAlert
+        theme={alertType}
+        show={alertFlag}
+        title="Lorem"
+        titleContainerStyle={{height: 0}}
+        subtitle={alertMsg}
+        onRequestClose={()=>{console.log("closed")}}
+        subtitleStyle={{fontSize: 17}}
+      >
+        <SCLAlertButton theme={alertType} onPress={()=>{setAlertFlag(false)}}>OK</SCLAlertButton>
+      </SCLAlert>
       <Portal>
         <Dialog visible={modal} onDismiss={hideDialog} style={{width: 200, marginHorizontal: (windowWidth-200)/2}}>
           {/* <Dialog.Content> */}
@@ -88,9 +251,10 @@ export default function SignUpScreen({navigation}) {
       <View style={Styles.userNameContainer}>
         <TextInput
           style={Styles.nameInput}
-          secureTextEntry={true}
+          // secureTextEntry={true}
           placeholder="* UserName"
           placeholderTextColor={colors.textFaded2}
+          onChangeText={(txt)=>{setUserName(txt)}}
         />
       </View>
       <SafeAreaView  style={Styles.phoneNumContainer}>
@@ -102,7 +266,13 @@ export default function SignUpScreen({navigation}) {
               onChangeFormattedText={(text) => {
                 console.log(text, 'formated text');
                 const valid = phoneInput.current?.isValidNumber(text);
+                console.log(valid)
                 setCheckValid(valid)
+                setFPhoneNumber(text)
+              }}
+              onChangeText={(text)=>{
+                console.log(text, "phone number")
+                setPhoneNumber(text)
               }}
               placeholder={"* Phone Number"}
               containerStyle={{margin: 0, padding: 0, backgroundColor: "white", width: 270}}
@@ -113,11 +283,18 @@ export default function SignUpScreen({navigation}) {
         <View
           style={Styles.rightInnerBtn}
         >
-          <TouchableOpacity style={{height: "100%", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-            <Text style={{color: "white"}}>
+          <TouchableOpacity
+            style={{height: "100%", flexDirection: "row", justifyContent: "center", alignItems: "center"}}
+            onPress={()=>{if(phoneNumber)getVerifyCode()}}
+            >
+            {
+              sendCodeLoading?<ActivityIndicator animating={true} color={"white"} />:<Text style={{color: phoneNumber?"white":"gray"}}>
               Send Code
             </Text>
+            }
+            
           </TouchableOpacity>
+          
         </View>
       </SafeAreaView >
       <View style={Styles.phoneNumContainer}>
@@ -125,14 +302,20 @@ export default function SignUpScreen({navigation}) {
           style={Styles.userNameInput}
           placeholder="* Verify Code"
           placeholderTextColor={colors.textFaded2}
+          onChangeText={(text)=>{setPVerifyCode(text)}}
         />
         <View
           style={Styles.rightInnerBtn}
         >
-          <TouchableOpacity style={{height: "100%", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-            <Text style={{color: "white"}}>
+          <TouchableOpacity
+            style={{height: "100%", flexDirection: "row", justifyContent: "center", alignItems: "center"}}
+            onPress={()=>{if(!verified)phoneVerify()}}
+            >
+            {
+              verified?<Icon name={"check-circle"} size={22} color={"white"} />:verifyCodeLoading?<ActivityIndicator animating={true} color={"white"} />:<Text style={{color: phoneNumber?"white":"gray"}}>
               Verify Code
             </Text>
+            }
           </TouchableOpacity>
         </View>
       </View>
@@ -143,6 +326,7 @@ export default function SignUpScreen({navigation}) {
           secureTextEntry={true}
           placeholder="* Password"
           placeholderTextColor={colors.textFaded2}
+          onChangeText={txt=>{setPwd(txt)}}
         />
       </View>
       <View style={Styles.passwordContainer}>
@@ -151,10 +335,17 @@ export default function SignUpScreen({navigation}) {
           secureTextEntry={true}
           placeholder="* Confirm Password"
           placeholderTextColor={colors.textFaded2}
+          onChangeText={txt=>{setConfirmPwd(txt)}}
         />
       </View>
-      <TouchableOpacity style={Styles.loginContainer}>
-        <Text style={Styles.loginText}>Sign Up</Text>
+      <TouchableOpacity
+        style={Styles.loginContainer}
+        onPress={signUp}
+        >
+          {
+            loadState?<ActivityIndicator animating={true} color={"white"} style={{marginRight: 20}} />:null
+          }
+          <Text style={Styles.loginText}>{loadState?"Saving... "+loadState+"%":"Sign Up"}</Text>
       </TouchableOpacity>
       <View
         style={{
@@ -319,6 +510,8 @@ const Styles = StyleSheet.create({
     marginStart: 20,
     marginEnd: 20,
     borderRadius: 5,
+    flexDirection: "row",
+    alignItems:"center"
   },
   loginText: {
     color: '#fff',

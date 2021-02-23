@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import Axios from "axios";
 import {
   View,
   Text,
@@ -11,7 +12,7 @@ import images from '../../res/images';
 import colors from '../../res/colors';
 import Shimmer from 'react-native-shimmer'
 StatusBar.setBarStyle('light-content');
-
+Axios.defaults.baseURL = "http://192.168.110.121:8000/api/";
 export default function SplashScreen({navigation}) {
   useEffect(() => {
     setTimeout(()=>{
