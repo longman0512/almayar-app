@@ -172,10 +172,17 @@ export default function SignUpScreen({navigation}) {
     Axios.post(
         "http://192.168.110.121:8000/api/SignUp",
         data,
+        {
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.lengthComputable) {
+              setUploadState(Number(progressEvent.loaded/progressEvent.total).toFixed(0))
+            }
+         }
+      }
       )
       .then(res => {
-        console.warn("========================", typeof res.data, res.data)
         // if(res.data.status){
+          setUploadState(0)
           showAlert("success", "Sign up successed!")
         // } else {
         //   showAlert("warning", "Sign up failed, try again")
@@ -320,8 +327,9 @@ export default function SignUpScreen({navigation}) {
           onChangeText={txt=>{setConfirmPwd(txt)}}
         />
       </View>
+      <View style={Styles.loginContainer} >
       <TouchableOpacity
-        style={Styles.loginContainer}
+        style={Styles.loginTextContainer}
         onPress={signUp}
         >
           {
@@ -329,6 +337,8 @@ export default function SignUpScreen({navigation}) {
           }
           <Text style={Styles.loginText}>{loadState?"Saving... "+loadState+"%":"Sign Up"}</Text>
       </TouchableOpacity>
+      </View>
+      
       <View
         style={{
           flexDirection: 'row',
@@ -484,18 +494,27 @@ const Styles = StyleSheet.create({
     color: colors.primary,
   },
   loginContainer: {
-    alignItems: 'center',
     height: 40,
     marginTop: 30,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
     marginStart: 20,
     marginEnd: 20,
     borderRadius: 5,
-    flexDirection: "row",
-    alignItems:"center"
   },
   loginText: {
     color: '#fff',
+    textAlign: "center",
+    textAlignVertical: "center"
+  },
+  loginTextContainer: {
+    color: '#fff',
+    backgroundColor: colors.primary,
+    width: "100%",
+    height: "100%",
+    borderRadius: 5,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    textAlignVertical: "center"
   },
 });

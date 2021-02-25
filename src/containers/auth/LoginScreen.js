@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import Axios from "axios";
 import {
   View,
   Text,
@@ -14,14 +15,43 @@ import {
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import images from '../../res/images';
 import colors from '../../res/colors';
-import MainNavigator from '../main/MainNavigator';
+import { ActivityIndicator } from 'react-native-paper';
+import {
+  SCLAlert,
+  SCLAlertButton
+} from 'react-native-scl-alert'
 StatusBar.setBarStyle('light-content');
 
 export default function LoginScreen({navigation}) {
-  const [validate, setValidate] = React.useState(false); 
+  const [phoneNumber, setPhoneNumber] = React.useState("")
+  const [pwd, setPwd] = React.useState("")
+  const [loading, setLoading] = React.useState(false)
   const _signInAsync = async () => {
-    setValidate(true);
-    navigation.navigate('MainScreen');
+    var data = new FormData();
+    data.append("phoneNumber", phoneNumber)
+    data.append("pwd", pwd)
+    setLoading(true)
+    Axios({
+      method: "post",
+      url: "logIn",
+      data,
+      validateStatus: (status) => {
+        return true;
+      },
+    }).then(res=>{
+      setLoading(false)
+      if(res.data.status == true){
+        showAlert("success", res.data.msg)
+      } else {
+        showAlert("warning", res.data.msg)
+      }
+      return res.data;
+    }).catch(error=>{
+      console.log(error, "error")
+      setLoading(false)
+      alert("Something Error Please contact Admin")
+    });
+    // navigation.navigate('MainScreen');
   };
   return (
     <View style={Styles.container}>
@@ -31,8 +61,9 @@ export default function LoginScreen({navigation}) {
       <View style={Styles.userNameContainer}>
         <TextInput
           style={Styles.userNameInput}
-          placeholder="Phone number"
+          placeholder="Phone number (+9647755526119)"
           placeholderTextColor={colors.textFaded2}
+          onChangeText = {(txt)=>{setPhoneNumber(txt)}}
         />
       </View>
       <View style={Styles.passwordContainer}>
@@ -41,6 +72,7 @@ export default function LoginScreen({navigation}) {
           style={Styles.passwordInput}
           placeholder="Password"
           placeholderTextColor={colors.textFaded2}
+          onChangeText = {(txt)=>{setPwd(txt)}}
         />
       </View>
       <View style={Styles.forgotPasswordContainer}>
@@ -48,9 +80,14 @@ export default function LoginScreen({navigation}) {
           <Text style={Styles.forgotPasswordText}>Forgot password?</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={Styles.loginContainer} onPress={_signInAsync}>
-        <Text style={Styles.loginText}>Log In</Text>
-      </TouchableOpacity>
+      <View style={Styles.loginContainer} >
+        <TouchableOpacity style = {Styles.loginTextContainer} onPress={_signInAsync}>
+          {
+            loading?<ActivityIndicator style={{marginRight: 10}} animating={true} color={"white"} />:null
+          }
+          <Text style={Styles.loginText}>Log In</Text>
+        </TouchableOpacity>
+      </View>
       <View style={{flexDirection: 'row'}}>
       </View>
       <View
@@ -192,16 +229,27 @@ const Styles = StyleSheet.create({
     color: colors.primary,
   },
   loginContainer: {
-    alignItems: 'center',
     height: 40,
     marginTop: 30,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
     marginStart: 20,
     marginEnd: 20,
     borderRadius: 5,
   },
   loginText: {
     color: '#fff',
+    textAlign: "center",
+    textAlignVertical: "center"
+  },
+  loginTextContainer: {
+    color: '#fff',
+    backgroundColor: colors.primary,
+    width: "100%",
+    height: "100%",
+    borderRadius: 5,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    textAlignVertical: "center"
   },
 });
