@@ -1,17 +1,19 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import images from 'res/images';
-import {Image, StatusBar} from 'react-native';
+import {Image, View} from 'react-native';
 import palette from 'res/palette';
 import colors from 'res/colors';
-
+import { Badge } from 'react-native-paper';
 import homeNavigator from './home/homeNavigator';
 import favoriteNavigator from './activity/favoriteNavigator';
 import addPostNavigator from './addPost/addPostNavigator';
 import profileNavigator from './profile/profileNavigator';
 import searchNavigator from './search/searchNavigator';
+import StoreContext from "../../context/index";
 
 export default function TabNavigator({NavigateToStoryCamera}) {
+  const  { store, setStore } = useContext(StoreContext);
   const Tab = createBottomTabNavigator();
   return (
     <React.Fragment>
@@ -37,7 +39,11 @@ export default function TabNavigator({NavigateToStoryCamera}) {
             } else if (route.name === 'Profile') {
               iconName = focused ? images.profile_selected : images.profile;
             }
-            return <Image style={palette.header.image} source={iconName} />;
+            
+            return route.name=="Profile"?<View style={{position:"relative"}}>
+                    <Image style={palette.header.image} source={iconName} />
+                    <Badge style={{position: "absolute", top: -8, right: -10}}>{store.newNotification}</Badge>
+                  </View>:<Image style={palette.header.image} source={iconName} />;
           },
         })}>
         <Tab.Screen name="Home" component={homeNavigator} />

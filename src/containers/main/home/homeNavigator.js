@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {createStackNavigator, TransitionSpecs} from '@react-navigation/stack';
 import homeScreen from './homeScreen';
 import StoryScreen from './story/StoryScreen';
@@ -18,8 +18,10 @@ import palette from 'res/palette';
 import images from 'res/images';
 import colors from '../../../res/colors';
 import DirectMessageScreen from './DirectMessage/DirectMessageScreen';
+import StoreContext from "../../../context/index";
 
 export default function () {
+  const  { store, setStore } = useContext(StoreContext);
   const Stack = createStackNavigator();
   StatusBar.setBarStyle('light-content');
   return (
@@ -53,7 +55,10 @@ export default function () {
                   source={images.direct_message}
                   style={Styles.headerRightImage}
                 />
-                <Badge style={{position: "absolute", top: 2}}>3</Badge>
+                {
+                  store?.newMsg?<Badge style={{position: "absolute", top: 2}}>{store?.newMsg}</Badge>:null
+                }
+                
               </TouchableOpacity>
             </View>
           ),

@@ -14,8 +14,8 @@ export default function StoryListItem({item, storyOnPress}) {
           style={{borderRadius: 100, padding: 2}}>
           <View style={{borderWidth: 2, borderColor: "white", borderRadius: 100}}>
             {
-              item.src==''?<Text style={{width: 55, height: 55, borderRadius: 70, textAlignVertical:"center", textAlign: "center", fontSize: 30, color: "white"}}>{item?.key[0]?.toUpperCase() +item?.key[1]?.toUpperCase()}</Text>:<Image
-                                            source={item.src?images[item.src]:images.avatar}
+              item.u_avatar==''?<Text style={{width: 55, height: 55, borderRadius: 70, textAlignVertical:"center", textAlign: "center", fontSize: 30, color: "white"}}>{item?.u_name[0]?.toUpperCase() +item?.u_name[1]?.toUpperCase()}</Text>:<Image
+                                            source={item.u_avatar?{uri: item.u_avatar}:images.avatar}
                                             style={{width: 55, height: 55, borderRadius: 70}}
                                           />
             }

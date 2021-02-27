@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import Axios from "axios";
 import {
   View,
@@ -21,27 +21,42 @@ import {
   SCLAlertButton
 } from 'react-native-scl-alert'
 StatusBar.setBarStyle('light-content');
+import StoreContext from "../../context/index";
 
 export default function LoginScreen({navigation}) {
+  const  { store, setStore } = useContext(StoreContext);
   const [phoneNumber, setPhoneNumber] = React.useState("")
   const [pwd, setPwd] = React.useState("")
   const [loading, setLoading] = React.useState(false)
+  const [alertFlag, setAlertFlag] = React.useState(false);
+  const [alertType, setAlertType] = React.useState("warning");
+  const [alertMsg, setAlertMSG] = React.useState("")
+
   const _signInAsync = async () => {
+    if(!phoneNumber){
+      showAlert("warning", "Please insert your phone number")
+      return false
+    } else if(!pwd){
+      showAlert("warning", "Please insert your password")
+      return false
+    }
     var data = new FormData();
     data.append("phoneNumber", phoneNumber)
     data.append("pwd", pwd)
     setLoading(true)
     Axios({
       method: "post",
-      url: "logIn",
+      url: "Login",
       data,
       validateStatus: (status) => {
         return true;
       },
     }).then(res=>{
       setLoading(false)
+      console.log(res.data.data)
       if(res.data.status == true){
-        showAlert("success", res.data.msg)
+        setStore(res.data.data)
+        navigation.navigate('MainScreen');
       } else {
         showAlert("warning", res.data.msg)
       }
@@ -51,10 +66,25 @@ export default function LoginScreen({navigation}) {
       setLoading(false)
       alert("Something Error Please contact Admin")
     });
-    // navigation.navigate('MainScreen');
   };
+  const showAlert=(type, msg)=>{
+    setAlertType(type)
+    setAlertMSG(msg)
+    setAlertFlag(true)
+  }
   return (
     <View style={Styles.container}>
+      <SCLAlert
+        theme={alertType}
+        show={alertFlag}
+        title="Lorem"
+        titleContainerStyle={{height: 0}}
+        subtitle={alertMsg}
+        onRequestClose={()=>{console.log("closed")}}
+        subtitleStyle={{fontSize: 17}}
+      >
+        <SCLAlertButton theme={alertType} onPress={()=>{setAlertFlag(false)}}>OK</SCLAlertButton>
+      </SCLAlert>
       <View style={Styles.logoContainer}>
         <Image source={images.logo} style={{height: 200, width: 180}} />
       </View>
@@ -73,6 +103,7 @@ export default function LoginScreen({navigation}) {
           placeholder="Password"
           placeholderTextColor={colors.textFaded2}
           onChangeText = {(txt)=>{setPwd(txt)}}
+          secureTextEntry={true}
         />
       </View>
       <View style={Styles.forgotPasswordContainer}>
@@ -98,7 +129,7 @@ export default function LoginScreen({navigation}) {
         }}>
         <Text style={{color: '#969696'}}>Don't you have an account?</Text>
         <TouchableOpacity onPress={()=>{navigation.navigate("SignUp")}}>
-          <Text style={{color: colors.primary}}> Sign Up.</Text>
+          <Text style={{color: colors.primary}}> Sign Up</Text>
         </TouchableOpacity>
       </View>
     </View>
