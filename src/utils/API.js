@@ -60,3 +60,23 @@ export async function getProDetail(pro_id) {
   });
   return DATA;
 }
+
+export async function getNextPageApi(pageNum) {
+  var data = new FormData();
+  data.append('api_key', ' admin@1474?');
+  data.append('pageNum', pageNum);
+  console.log(data)
+  const DATA = await Axios({
+    method: 'post',
+    url: 'getNextPage',
+    data,
+    validateStatus: (status) => {
+      return true;
+    },
+  }).then((res) => {
+    return res.data;
+  }).catch(error =>{
+    console.log(error)
+  });
+  return DATA;
+}

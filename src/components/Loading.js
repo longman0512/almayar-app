@@ -5,12 +5,13 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
-
+import { Overlay } from 'react-native-elements'
+import { ActivityIndicator } from 'react-native-paper';
 
 export default function Loading(props) {
-  return (<View style={Styles.container}>
-                    <ActivityIndicator />
-                </View>
+  return (<Overlay isVisible={props.loading}>
+    <ActivityIndicator animating={true} />
+  </Overlay>
   );
 }
 
