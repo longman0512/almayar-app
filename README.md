@@ -14,3 +14,8 @@ public void apply(OkHttpClient.Builder builder) {
 ### warning: set usenativeDriver Flag:(2021-02-23)
 useNativeDriver: true
 on node_module/react-native-scl-alert/src/components/SCLAlert.js: 101
+
+"products"=>$products,
+"newMsg"=>count($newMsg),
+"newNotification"=>count($newNotify),
+"topUsers"=>$topUsers,

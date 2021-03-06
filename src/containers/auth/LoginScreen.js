@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useContext } from 'react';
 import Axios from "axios";
 import {
@@ -25,8 +26,8 @@ import StoreContext from "../../context/index";
 
 export default function LoginScreen({navigation}) {
   const  { store, setStore } = useContext(StoreContext);
-  const [phoneNumber, setPhoneNumber] = React.useState("")
-  const [pwd, setPwd] = React.useState("")
+  const [phoneNumber, setPhoneNumber] = React.useState("+9647755526199")
+  const [pwd, setPwd] = React.useState("123")
   const [loading, setLoading] = React.useState(false)
   const [alertFlag, setAlertFlag] = React.useState(false);
   const [alertType, setAlertType] = React.useState("warning");
@@ -94,6 +95,7 @@ export default function LoginScreen({navigation}) {
           placeholder="Phone number (+9647755526119)"
           placeholderTextColor={colors.textFaded2}
           onChangeText = {(txt)=>{setPhoneNumber(txt)}}
+          value = {'+9647755526119'}
         />
       </View>
       <View style={Styles.passwordContainer}>
@@ -104,6 +106,7 @@ export default function LoginScreen({navigation}) {
           placeholderTextColor={colors.textFaded2}
           onChangeText = {(txt)=>{setPwd(txt)}}
           secureTextEntry={true}
+          value={123}
         />
       </View>
       <View style={Styles.forgotPasswordContainer}>

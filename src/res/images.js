@@ -18,6 +18,7 @@ const images = {
   more: require('./images/more.png'),
   bookmark: require('./images/bookmark.png'),
   like: require('./images/like.png'),
+  like_full: require('./images/like_full.png'),
   favorite: require('./images/favorite.png'),
   favorite_select: require('./images/fav_select.png'),
   comment: require('./images/comment.png'),

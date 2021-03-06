@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, {useContext} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import images from 'res/images';
@@ -40,7 +41,7 @@ export default function TabNavigator({NavigateToStoryCamera}) {
               iconName = focused ? images.profile_selected : images.profile;
             }
             
-            return route.name=="Profile"?<View style={{position:"relative"}}>
+            return route.name=="Profile"&&store.newNotification?<View style={{position:"relative"}}>
                     <Image style={palette.header.image} source={iconName} />
                     <Badge style={{position: "absolute", top: -8, right: -10}}>{store.newNotification}</Badge>
                   </View>:<Image style={palette.header.image} source={iconName} />;

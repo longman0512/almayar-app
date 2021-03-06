@@ -1,12 +1,52 @@
+/* eslint-disable */
 import React from 'react';
-import {View, Image, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Image, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
+import { Overlay } from 'react-native-elements'
 import LinearGradient from 'react-native-linear-gradient';
-import images from 'res/images';
 import colors from '../../../../res/colors';
+import { getProfileInfo } from '../../../../utils/API';
+import StoreContext from "../../../../context/index";
+import { useNavigation } from '@react-navigation/native';
+import { ActivityIndicator } from 'react-native-paper';
+
 export default function StoryListItem({item, storyOnPress}) {
+  console.log(item)
+  const navigation = useNavigation();
+  const  { store, setStore } = React.useContext(StoreContext);
+  const [loading, setLoading] = React.useState(false);
+
+  const viewProfile = (user)=>{
+    // console.log(typeof user)
+    setLoading(true)
+    // if(store.userInfo == user){
+    //   getUserInfo(user).then(res=>{
+
+    //   })
+    // }
+    getProfileInfo(user).then(res=>{
+      setLoading(false)
+      if(res.status){
+        setStore({
+          ...store,
+          publicUserInfo: res.data
+        })
+        if(store.userInfo == user){
+          navigation.navigate('Profile')
+        } else {
+          navigation.navigate('UserProfile')
+        }
+      } else {
+        Alert.alert("Al Mayar", res.msg)
+      }
+    })
+    
+  }
   return (
     <View style={Styles.container}>
-      <TouchableOpacity onPress={storyOnPress}>
+      <Overlay isVisible={loading}>
+        <ActivityIndicator animating={true} />
+      </Overlay>
+      <TouchableOpacity onPress={()=>{viewProfile(item.u_id)}}>
         <LinearGradient
           colors={[colors.primary, colors.secondary, colors.primary]}
           start={{x: 0.0, y: 1.0}}
@@ -14,10 +54,10 @@ export default function StoryListItem({item, storyOnPress}) {
           style={{borderRadius: 100, padding: 2}}>
           <View style={{borderWidth: 2, borderColor: "white", borderRadius: 100}}>
             {
-              item.u_avatar==''?<Text style={{width: 55, height: 55, borderRadius: 70, textAlignVertical:"center", textAlign: "center", fontSize: 30, color: "white"}}>{item?.u_name[0]?.toUpperCase() +item?.u_name[1]?.toUpperCase()}</Text>:<Image
-                                            source={item.u_avatar?{uri: item.u_avatar}:images.avatar}
-                                            style={{width: 55, height: 55, borderRadius: 70}}
-                                          />
+              item.u_avatar!=''?<Image
+                  source={item.u_avatar?{uri: "http://192.168.110.121:8000/images/avatar/9647755526119.jpg"}:images.avatar}
+                  style={{width: 55, height: 55, borderRadius: 70}}
+                />:<Text style={{width: 55, height: 55, borderRadius: 70, textAlignVertical:"center", textAlign: "center", fontSize: 30, color: "white"}}>{item.u_name[0]+item.u_name[1]}</Text>
             }
           </View>
         </LinearGradient>

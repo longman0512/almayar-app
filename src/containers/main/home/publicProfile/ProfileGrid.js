@@ -2,6 +2,10 @@ import React from 'react';
 import {View, Image, Text} from 'react-native';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import images from '../../../../res/images';
+import StoreContext from "../../../../context/index";
+import { Overlay } from 'react-native-elements'
+import { ActivityIndicator } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
 const data = [
   {
@@ -39,12 +43,31 @@ const data = [
 ];
 
 function Test({item}) {
+  const navigation = useNavigation();
+  const  { store, setStore } = React.useContext(StoreContext);
+  const [loading, setLoading] = React.useState(false);
+
+  const viewProductDetail = (item) => {
+    console.log(item)
+    setStore({
+      ...store,
+      ProductDetail: item
+    })
+    navigation.navigate('ProductDetail')
+
+    // getProDetail(pro_id).then(res=>{
+    //   console.log(res)
+    // })
+  }
   return (
     <View style={{flex: 1}}>
+      <Overlay isVisible={loading}>
+        <ActivityIndicator animating={true} />
+      </Overlay>
       <TouchableOpacity
-        onPress={() => console.log('Pressed Profile Grid Image')}>
+         onPress={()=>{viewProductDetail(item)}}>
         <Image
-          source={item.proImage}
+          source={{uri: item.pro_url}}
           style={{
             height: 150,
             width: 150,
@@ -61,9 +84,10 @@ function Test({item}) {
 }
 
 export default function ProfileGrid() {
+  const  { store, setStore } = React.useContext(StoreContext);
   return (
     <FlatList
-      data={data}
+      data={store.publicUserInfo.products}
       style={{marginTop: 2, marginStart: 2}}
       renderItem={({item, index}) => <Test item={item}/>}
       numColumns={3}

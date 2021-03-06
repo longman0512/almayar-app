@@ -12,7 +12,7 @@ export default function PostText({post}) {
         marginTop: 10,
       }}>
       <Text style={{color: colors.text, fontWeight: 'bold', fontSize: 13}}>
-        {post.userName}
+        {post.title}
       </Text>
       <Text style={{color: colors.text}}>{post.text}</Text>
     </View>

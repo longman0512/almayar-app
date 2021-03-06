@@ -4,6 +4,11 @@ import {FlatList} from 'react-native-gesture-handler';
 import {Card} from 'react-native-paper'
 import colors from '../../../../res/colors';
 import images from '../../../../res/images';
+import StoreContext from "../../../../context/index";
+import { toggleLike } from '../../../../utils/API';
+import { Overlay } from 'react-native-elements'
+import { ActivityIndicator } from 'react-native-paper';
+
 const data = [{key: '1'}];
 const post = {
     key: '1',
@@ -28,26 +33,78 @@ function tapToFavorite(favoriteIcon) {
     }
   }
 export default function productDetailscreen() {
-    const [favoriteIcon, setFavoriteIcon] = React.useState(1);
-    const [bookmarkIcon, setBookmarkIcon] = React.useState(1);
-    const [likIcon, setLikeIcon] = React.useState(1);
+  const  { store, setStore } = React.useContext(StoreContext);
+  const [favoriteIcon, setFavoriteIcon] = React.useState(1);
+  const [bookmarkIcon, setBookmarkIcon] = React.useState(1);
+  const [likIcon, setLikeIcon] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  const product = store.ProductDetail
+  console.log(product, "product")
+  React.useEffect(()=>{
+    store.ProductDetail.likes.map((item, index)=>{
+      if(!likIcon)
+      if(item.u_id == store.userInfo ){
+        setLikeIcon(true)
+      }
+    })
+  }, [])
+
+  const likeAction = (pro_id)=>{
+    setLoading(true)
+    toggleLike(store.userInfo, pro_id).then(res=>{
+      var temp = []
+      store.products.map((pro, index)=>{
+        if(res.data.flag){
+          setLikeIcon(true)
+        } else {
+          setLikeIcon(false)
+        }
+        if(pro.key == pro_id){
+          var temp_pro = {}
+          temp_pro = pro
+          temp_pro.likeCount = res.data.likes.length
+          temp_pro.likes = res.data.likes
+
+          temp.push(temp_pro)
+          if(product.key == temp_pro.key){
+            setStore({
+              ...store,
+              ProductDetail: temp_pro
+            })
+          }
+        } else {
+          temp.push(pro)
+        }
+      })
+      setStore({
+        ...store,
+        products: temp
+      })
+      setLoading(false)
+    })
+  }
   return (
+    <>
+    <Overlay isVisible={loading}>
+        <ActivityIndicator animating={true} />
+      </Overlay>
     <FlatList
       style={{flex: 1, backgroundColor: colors.bottomBackGround}}
       data={data}
       renderItem={() => (
         <View style={{flex:1}}>
             <Card>
-            <Image source={post.imgUrl} style={Styles.postImg} />
-            {
-              post.discount!=""?<Text style={{position: 'absolute', bottom: 40, right: 0, backgroundColor: colors.primary, paddingHorizontal: 20, paddingVertical: 5, fontSize: 15, color: "white", fontWeight: "bold"}}>Discount: {post.discount}</Text>:null
-            }
+            <Image source={{uri: store.ProductDetail.imgUrl}} style={Styles.postImg} />
+            {/* {
+              store.ProductDetail.discount!=""?<Text style={{position: 'absolute', bottom: 40, right: 0, backgroundColor: colors.primary, paddingHorizontal: 20, paddingVertical: 5, fontSize: 15, color: "white", fontWeight: "bold"}}>Discount: {store.ProductDetail.discount.amount}</Text>:null
+            } */}
             <View style={{flexDirection: 'row', justifyContent: 'center', position: 'absolute', bottom: 5, left: 5, backgroundColor: "rgba(255, 255, 255, 0.2)", padding: 4, borderRadius: 10}}>
-                <TouchableOpacity onPress={() => setFavoriteIcon(favoriteIcon + 1)}>
+                {/* <TouchableOpacity onPress={() => setFavoriteIcon(favoriteIcon + 1)}>
                 <Image source={tapToFavorite(favoriteIcon)} style={Styles.actionIcons} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress = {()=>{}}>
-                <Image source={images.like} style={Styles.actionIcons} />
+                </TouchableOpacity> */}
+                <TouchableOpacity onPress = {()=>{likeAction(store.ProductDetail.key)}}>
+                <Image source={likIcon?images.like_full:images.like} style={Styles.actionIcons} />
                 </TouchableOpacity>
             </View>
           </Card>
@@ -60,17 +117,17 @@ export default function productDetailscreen() {
                 }}>
                 <View style={{flexDirection: "row", justifyContent: "space-between"}}>
                     <Text style={{color: colors.text, fontWeight: 'bold', fontSize: 18}}>
-                        {post.userName}
+                        {store.ProductDetail.title}
                     </Text>
-                    <Text style={{color: colors.primary, fontSize: 16, fontWeight: "bold"}}>$ {post.price}</Text>
+                    <Text style={{color: colors.primary, fontSize: 16, fontWeight: "bold"}}>$ {store.ProductDetail.price}</Text>
                 </View>
-                <Text style={{color: colors.text, fontSize: 15}}>{post.text}</Text>
+                <Text style={{color: colors.text, fontSize: 15}}>{store.ProductDetail.text}</Text>
             </View>
             <TouchableOpacity
                 onPress={() => console.log('Pressed Post Likes')}
                 style={{marginLeft: 15, marginTop: 10, marginEnd: 15}}>
                 <Text style={{color: colors.text, fontWeight: 'bold'}}>
-                    {post.likeCount} likes{' '}
+                    {store.ProductDetail.likeCount} likes{' '}
                 </Text>
             </TouchableOpacity>
             <Text
@@ -80,11 +137,12 @@ export default function productDetailscreen() {
                 marginStart: 15,
                 fontSize: 12,
                 }}>
-                {post.publishDate}
+                {store.ProductDetail.publishDate}
             </Text>
         </View>
       )}
     />
+    </>
   );
 }
 

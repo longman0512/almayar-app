@@ -1,17 +1,48 @@
 import React from 'react';
-import {Text, TouchableOpacity, View, StyleSheet, Image} from 'react-native';
+import {Text, TouchableOpacity, View, StyleSheet, Image, Alert} from 'react-native';
 import palette from 'res/palette';
 import images from 'res/images';
 import colors from 'res/colors';
 import PostImage from './PostImage';
 import { useNavigation } from '@react-navigation/native';
+import { Overlay } from 'react-native-elements'
+import { ActivityIndicator } from 'react-native-paper';
+import StoreContext from "../../../../context/index";
+import { getProfileInfo,  } from '../../../../utils/API';
+
 export default function PostHeader({post}) {
   const navigation = useNavigation();
+  const  { store, setStore } = React.useContext(StoreContext);
+  const [loading, setLoading] = React.useState(false);
+  const viewProfile = (user)=>{
+    console.log(typeof user)
+    setLoading(true)
+    getProfileInfo(user).then(res=>{
+      setLoading(false)
+      console.log(res, "in component")
+      if(res.status){
+        setStore({
+          ...store,
+          publicUserInfo: res.data
+        })
+        if(store.userInfo == user){
+          navigation.navigate('Profile')
+        } else {
+          navigation.navigate('UserProfile')
+        }
+      } else {
+        Alert.alert("Al Mayar", res.msg)
+      }
+    })
+  }
   return (
-    <TouchableOpacity style={Styles.container} onPress={()=>{navigation.navigate("UserProfile")}}>
+    <TouchableOpacity style={Styles.container} onPress={()=>{viewProfile(post.u_id)}}>
+      <Overlay isVisible={loading}>
+        <ActivityIndicator animating={true} />
+      </Overlay>
       <View style={Styles.nameContainer}>
         <Image
-          source={post.avatar}
+          source={post.avatar?{uri: post.avatar}:images.avatar}
           style={Styles.personImage}
         />
         <View>
@@ -48,6 +79,8 @@ const Styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 40,
+    borderWidth: 2,
+    borderColor: colors.primary
   },
   personName: {
     color: colors.text,
