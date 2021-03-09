@@ -10,6 +10,10 @@ target 'Instagram' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'react-native-video', :path => '../node_modules/react-native-video'
+
+  pod 'react-native-date-picker', :path => '../node_modules/react-native-date-picker'
+
   target 'InstagramTests' do
     inherit! :complete
     # Pods for testing

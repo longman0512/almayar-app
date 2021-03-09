@@ -1,55 +1,335 @@
-import React from 'react';
-import {View, Text, Image, StyleSheet, TextInput} from 'react-native';
+import React, { useEffect } from 'react';
+import {View, Text, Image, StyleSheet, TextInput, Dimensions} from 'react-native';
 import colors from '../../../res/colors';
 import images from '../../../res/images';
-import { Card, Button } from 'react-native-paper';
-import { ScrollView } from 'react-native-gesture-handler';
+import { Card, Button, Dialog, Portal } from 'react-native-paper';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import ModalDropdown from 'react-native-modal-dropdown';
+import { getCategories, addProductApi } from "../../../utils/API"
+import Loading from "../../../components/Loading"
+import ImagePicker from 'react-native-image-crop-picker';
+import StoreContext from "../../../context/index";
+import Video from 'react-native-video';
+import moment from "moment";
+import DatePicker from 'react-native-date-picker'
+
+const windowWidth = Dimensions.get('screen').width;
+
 export default function addPostScreen() {
+  const  { store, setStore } = React.useContext(StoreContext);
+
+  const disTypeData = ["Fixed", "Percentage"];
   const [proImage, setProImage] = React.useState("");
+  const [category, setCategory] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+  const [proName, setProName] = React.useState('');
+  const [proPrice, setProPrice] = React.useState(0);
+  const [selCat, setCat] = React.useState(null);
+  const [orgCat, setOrgCat] = React.useState(null);
+  const [proDescription, setProDescription] = React.useState('');
+  const [modal, setModal] = React.useState(false);
+  const [imageFile, setImageFile] = React.useState('');
+  
+  const [btnDisable, setDisabled] = React.useState(true)
+  const [discountType, selectDiscoutType] = React.useState('fixed')
+  const [discountAmount, setDisAmount] = React.useState(0)
+  
+  const [displayDate, setDisplayDate] = React.useState(new Date());
+  const [startDate, setStartDate] = React.useState(new Date());
+  const [endDate, setEndDate] = React.useState(new Date());
+
+  const [startFlag, setStartFlag] = React.useState(false);
+  const [endFlag, setEndFlag] = React.useState(false);
+
+  React.useEffect(()=>{
+    setLoading(true)
+    getCategories().then(res=>{
+      setLoading(false)
+      console.log(res)
+      if(res?.data?.length){
+        var temp = []
+        res.data.map((cat, index)=>{
+          if(cat?.cat_name)
+          temp.push(cat.cat_name)
+        })
+        setOrgCat(res.data)
+        setCategory(temp)
+      }
+    })
+  }, [])
+  useEffect(()=>{
+    if(!selCat || !proName || !proPrice || !imageFile){
+      setDisabled(true)
+    } else {
+      setDisabled(false)
+    }
+  })
+  
+  const selectCat = (itemIndex)=>{
+    orgCat.map((cat, index)=>{
+      if(index == itemIndex){
+        setCat(cat.cat_id)
+      }
+    })
+  }
+
+  const PickLibrary = () => {
+    hideDialog();
+    ImagePicker.openPicker({
+      // cropping: true,
+      // cropperCircleOverlay: true,
+      mediaType: 'any',
+    }).then((image) => {
+      console.log(image);
+      setImageFile(image);
+    });
+  };
+
+  const PickCamera = () => {
+    hideDialog();
+    ImagePicker.openCamera({
+      // cropping: true,
+      // cropperCircleOverlay: true,
+      mediaType: 'any',
+    }).then((image) => {
+      console.log(image);
+      setImageFile(image);
+    });
+  };
+
+  const hideDialog = () => {
+    setModal(false);
+  };
+
+  const showDialog = () => {
+    setModal(true);
+  };
+
+  const addProduct = ()=> {
+    addProductApi({
+      category: selCat,
+      pro_name: proName,
+      pro_price: proPrice,
+      pro_description: proDescription,
+      pro_discount_type: discountType,
+      pro_discount_amount: discountAmount,
+      pro_media: imageFile,
+      user_id: store.userInfo,
+      valid_from: startDate,
+      valid_to: endDate
+    }).then((res)=>{
+      console.log(res)
+    })
+  }
+  
+  const changeRange = (d) => {
+    console.log(d)
+    const { startDate, endDate, date } = d;
+    console.log( startDate, endDate, date)
+    if(typeof startDate != 'undefined' && startDate){
+      setStartDate(startDate)
+    }
+    if(typeof endDate != 'undefined' && endDate){
+      setEndDate(endDate)
+    }
+    if(typeof date != 'undefined' && date){
+      // setDisplayDate(date)
+    }
+  }
+  
+  const toggleStartDate = () => {
+    setStartFlag(!startFlag)
+  }
+
+  const toggleEndDate = () => {
+    setEndFlag(!endFlag)
+  }
+
+  var videoBuffer = ''
+  var videoError = ''
   return (
     <View style={{
       flexDirection: 'column',
       alignItems: "center",
       flex: 1
     }}>
+      <Portal>
+        <Dialog
+          visible={modal}
+          onDismiss={hideDialog}
+          style={{width: 200, marginHorizontal: (windowWidth - 200) / 2}}>
+          {/* <Dialog.Content> */}
+          <Card onPress={PickLibrary}>
+            <Card.Content style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Image
+                source={images.photo_gallary}
+                style={{width: 50, height: 50, resizeMode: 'contain'}}
+              />
+              <Text
+                style={{color: colors.primary, fontSize: 20, marginLeft: 20}}>
+                Library
+              </Text>
+            </Card.Content>
+          </Card>
+          <Card onPress={PickCamera}>
+            <Card.Content style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Image
+                source={images.photo_camera}
+                style={{width: 50, height: 50, resizeMode: 'contain'}}
+              />
+              <Text
+                style={{color: colors.primary, fontSize: 20, marginLeft: 20}}>
+                Camera
+              </Text>
+            </Card.Content>
+          </Card>
+        </Dialog>
+      </Portal>
+      <Portal>
+        <Dialog
+          visible={startFlag}
+          onDismiss={toggleStartDate}
+          style={{flexDirection: 'row', justifyContent: "center", alignItems: 'center', backgroundColor: 'white'}}>
+          {/* <Dialog.Content> */}
+        <DatePicker
+          date={startDate}
+          onDateChange={setStartDate}
+          mode={'date'}
+        />
+        </Dialog>
+      </Portal>
+      <Portal>
+        <Dialog
+          visible={endFlag}
+          onDismiss={toggleEndDate}
+          style={{flexDirection: 'row', justifyContent: "center", alignItems: 'center', backgroundColor: 'white'}}>
+          {/* <Dialog.Content> */}
+        <DatePicker
+          date={endDate}
+          onDateChange={setEndDate}
+          mode={'date'}
+        />
+        </Dialog>
+      </Portal>
+
+      <Loading loading={loading}/>
       <ScrollView
         contentContainerStyle={{justifyContent: "center", alignItems: "center", marginTop: 20, paddingBottom: 30}}
         showsVerticalScrollIndicator={false}
       >
         {
-          proImage==""?<Card style={{marginBottom: 20, height: 180, flexDirection: "row", justifyContent: "center", alignItems: "center"}} onPress={()=>{console.log("month"); setProImage("pro")}}>
+          imageFile==""?<Card style={{marginBottom: 20, height: 200, width: (windowWidth-30), flexDirection: "row", justifyContent: "center", alignItems: "center"}} onPress={()=>{console.log("month"); showDialog(true)}}>
           <Card.Content>
             <View style={Styles.btnTextContainer}>
-              <Text style={Styles.btnText}>Select Image/Video</Text>
+              <Text style={Styles.btnText}>Image/Video</Text>
             </View>
           </Card.Content>
-          </Card>:<Card style={{marginBottom: 20, height: 180, flexDirection: "row", justifyContent: "center", alignItems: "center", padding: 0}} onPress={()=>{console.log("month"); setProImage("")}}>
-            <Image source = {images.pro1} style={{width: "100%", height: "100%"}}/>
+          </Card>:<Card style={{marginBottom: 20, height: 200, width: (windowWidth-30), flexDirection: "row", justifyContent: "center", alignItems: "center", padding: 0}} onPress={()=>{console.log("month"); setImageFile("")}}>
+            {
+              imageFile?.mime.indexOf('vide')>=0?<Video source={{uri: imageFile.path}}
+              onBuffer={videoBuffer}
+              repeat
+              onError={videoError}
+              style={{width: "100%", height: "100%"}} />:<Image source = {{uri: imageFile.path}} style={{width: "100%", height: "100%"}}/>
+            }
           </Card>
         }
         <View style={Styles.groupContainer}>
-          <Text style={Styles.labelContainer}>Product Name</Text>
-          <TextInput style={Styles.textInputContainer} placeholder={"Product Name"} value = {"bike A 30"}/>
+          <Text style={Styles.labelContainer}>* Category</Text>
+          <ModalDropdown
+            options={category}
+            defaultValue="Select Category..."
+            style={Styles.dropdownContainer}
+            textStyle={{width: "100%", height: "100%", textAlignVertical: 'center', fontSize: 18}}
+            defaultIndex={0}
+            dropdownStyle={{width: "88%"}}
+            dropdownTextStyle={{fontSize: 18}}
+            onSelect={(item)=>{selectCat(item)}}
+          />
         </View>
         <View style={Styles.groupContainer}>
-          <Text style={Styles.labelContainer}>Price</Text>
+          <Text style={Styles.labelContainer}>* Product Name</Text>
+          <TextInput
+            style={Styles.textInputContainer}
+            placeholder={"Product Name"}
+            onChangeText = {(txt)=>{setProName(txt)}}
+          />
+        </View>
+        <View style={Styles.groupContainer}>
+          <Text style={Styles.labelContainer}>* Price</Text>
           <View style={{width: "100%", flexDirection: "row", justifyContent: "space-between"}}>
-            <TextInput keyboardType={'numeric'} style={Styles.priceInputContainer} placeholder={"Price"}/>
+            <TextInput
+              keyboardType={'numeric'}
+              style={Styles.priceInputContainer}
+              placeholder={"Price"}
+              onChangeText = {(txt)=>{setProPrice(txt)}}
+            />
             <Text style={{position: 'absolute', left: 5, top: 7, fontSize: 16, color: "gray"}}>$</Text>
           </View>
         </View>
-        <View style={Styles.groupContainer}>
+        {/* <View style={Styles.groupContainer}>
           <Text style={Styles.labelContainer}>City</Text>
           <TextInput
             style={Styles.textInputContainer} placeholder={"City"}/>
-        </View>
+        </View> */}
         <View style={Styles.groupContainer}>
           <Text style={Styles.labelContainer}>Description</Text>
           <TextInput
-            style={Styles.aboutMeContainer} placeholder={"Description"} multiline  />
+            style={Styles.aboutMeContainer}
+            placeholder={"Description"}
+            multiline
+            onChangeText = {(txt)=>{setProDescription(txt)}}
+          />
         </View>
+        <View style={{flexDirection: "row", justifyContent: 'space-between', width: (windowWidth-45)}}>
+          <View style={{width: "47%"}}>
+            <Text style={Styles.labelContainer}>Discount</Text>
+            <ModalDropdown
+              options={["Fixed", "Percentage"]}
+              style={Styles.dropdownContainer}
+              textStyle={{width: "100%", height: "100%", textAlignVertical: 'center', fontSize: 18}}
+              defaultIndex={1}
+              dropdownStyle={{width: "40%"}}
+              dropdownTextStyle={{fontSize: 18}}
+              onSelect={(item)=>{selectDiscoutType(disTypeData[item])}}
+            />
+          </View>
+          <View style={{width: "47%"}}>
+            <View style={Styles.discountContainer}>
+              <Text style={Styles.labelContainer}>Amount</Text>
+              <View style={{width: "100%", flexDirection: "row", justifyContent: "space-between"}}>
+                <TextInput
+                  keyboardType={'numeric'}
+                  style={Styles.discountInputContainer}
+                  placeholder={"Amount"}
+                  onChangeText = {(txt)=>{setDisAmount(txt)}}
+                />
+                <Text style={{position: 'absolute', left: 5, top: 7, fontSize: 16, color: "gray"}}>{discountType=="Fixed"?'$':'%'}</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        {
+          discountAmount?<View style={Styles.groupContainer}>
+          <View style={{flexDirection: "row", justifyContent: 'space-between', width: (windowWidth-45)}}>
+            <View style={{width: "47%"}}>
+              <Text style={Styles.labelContainer}>Valid From</Text>
+              <TouchableOpacity style={{width: "100%", flexDirection: "row", justifyContent: "space-between"}} onPress={toggleStartDate}>
+                <Text>{startDate.toDateString()}</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{width: "47%"}}>
+              <Text style={Styles.labelContainer}>Valid To</Text>
+              <TouchableOpacity style={{width: "100%", flexDirection: "row", justifyContent: "space-between"}} onPress={toggleEndDate}>
+                <Text>{endDate.toDateString()}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>:null
+        }
+        
         <View style={Styles.groupContainer}>
-          <Button icon="camera" mode="contained" color={colors.primary} onPress={() => console.log('Pressed')} labelStyle={{color: "white"}}>
+          <Button icon="publish" mode="contained" color={colors.primary} onPress={() => addProduct()} labelStyle={{color: "white"}} disabled={btnDisable} style={{marginTop: 30}}>
             Publish
           </Button>
         </View>
@@ -62,11 +342,13 @@ const Styles = StyleSheet.create({
   btnTextContainer: {
     flexDirection: "row", 
     width: "100%", 
+    height: "100%",
     justifyContent: "center", 
+    alignItems: 'center'
   },
   btnText: {
     color: colors.secondary, 
-    fontSize: 28
+    fontSize: 20
   },
   labelContainer:{
     alignSelf:"flex-start", 
@@ -79,6 +361,22 @@ const Styles = StyleSheet.create({
     flexDirection: "column", 
     alignItems: "center"
   },
+  discountContainer: {
+    width: "100%", 
+    flexDirection: "column", 
+    alignItems: "center"
+  },
+  dropdownContainer: {
+    width: "100%", 
+    height: 36,
+    color: 'black', 
+    fontSize: 18, 
+    borderColor:colors.primary, 
+    borderWidth: 1,
+    padding: 3,
+    borderRadius: 3,
+    textAlignVertical: 'center'
+  },
   textInputContainer: {
     width: "100%", 
     color: 'black', 
@@ -89,6 +387,16 @@ const Styles = StyleSheet.create({
     borderRadius: 3
   },
   priceInputContainer: {
+    width: "100%", 
+    color: 'black', 
+    fontSize: 18, 
+    borderColor:colors.primary, 
+    borderWidth: 1,
+    padding: 3,
+    paddingLeft: 20,
+    borderRadius: 3
+  },
+  discountInputContainer: {
     width: "100%", 
     color: 'black', 
     fontSize: 18, 
@@ -110,7 +418,6 @@ const Styles = StyleSheet.create({
   aboutMeContainer: {
     width: "100%",
     color: 'black', 
-    marginBottom: 20,  
     height: 100,
     borderColor: colors.primary, 
     borderWidth:1,

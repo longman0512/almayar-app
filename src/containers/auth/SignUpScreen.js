@@ -16,12 +16,13 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import images from '../../res/images';
 import colors from '../../res/colors';
 import {Avatar} from 'react-native-elements';
-import {ActivityIndicator, Card, Dialog, Portal} from 'react-native-paper';
+import { ActivityIndicator, Card, Dialog, Portal } from 'react-native-paper';
 import ImagePicker from 'react-native-image-crop-picker';
 import PhoneInput from 'react-native-phone-number-input';
 import Icon from 'react-native-vector-icons/Feather';
 import {SCLAlert, SCLAlertButton} from 'react-native-scl-alert';
 StatusBar.setBarStyle('light-content');
+
 const windowWidth = Dimensions.get('screen').width;
 
 export default function SignUpScreen({navigation}) {
