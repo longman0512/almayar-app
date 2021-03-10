@@ -13,6 +13,7 @@ export async function getProfileInfo(user) {
       return true;
     },
   }).then((res) => {
+    console.log("user data in api", res.data)
     return res.data;
   }).catch(error =>{
     console.log(error)
@@ -145,6 +146,53 @@ export async function getAllProducts(catData) {
     })
   .then(res => {
     console.log(res.data)
+    return res.data
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+  return DATA
+}
+
+export async function toggleFollow(data) {
+
+  const DATA = await Axios.post(
+    "toggleFollow",
+    data)
+  .then(res => {
+    console.log(res.data)
+    return res.data
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+  return DATA
+}
+
+export async function editProfile(uploadData) {
+  var data = new FormData();
+  data.append('api_key', ' admin@1474?');
+  data.append('userName', uploadData.userName);
+  data.append('userFName', uploadData.userFName);
+  data.append('userLName', uploadData.userLName);
+  data.append('userCity', uploadData.userCity);
+  data.append('userDesc', uploadData.userDesc);
+  data.append('userId', uploadData.userId);
+  data.append('avatarFlag', uploadData.avatarFlag);
+  data.append('avatar',
+  {
+      uri: uploadData.avatar?uploadData.avatar:"none avatar",
+      name:'userProfile.jpg',
+      type: 'image/jpg', 
+  });
+
+  console.log("request api", data)
+  const DATA = await Axios.post(
+    "editProfile",
+    data)
+  .then(res => {
     return res.data
   })
   .catch(err => {
