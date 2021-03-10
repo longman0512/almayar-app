@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {FlatList, SafeAreaView, ScrollView} from 'react-native';
+import {Dimensions, SafeAreaView, ScrollView, View} from 'react-native';
 import Post from './post/Post';
 import colors from '../../../res/colors';
 import {Text} from 'react-native';
@@ -9,6 +9,7 @@ import StoryContainer from './story/StoryContainer';
 import StoreContext from "../../../context/index";
 import Loading from "../../../components/Loading"
 import { getNextPageApi, getPrevPageApi } from "../../../utils/API"
+const windowHeight= Dimensions.get('screen').height;
 
 export default function homeScreen({navigation}) {
   const  { store, setStore } = useContext(StoreContext);
@@ -81,8 +82,14 @@ export default function homeScreen({navigation}) {
     <SafeAreaView style={{backgroundColor: colors.background}}>
       <Loading loading={loading}/>
       <ScrollView
-
+        onScrollBeginDrag={()=>{
+          console.log("Drag start")
+        }}
+        onScroll={()=>{
+          console.log("on scroll")
+        }}
         onScrollEndDrag={({nativeEvent})=>{
+          console.log("drag end")
           if (isCloseToBottom(nativeEvent)) {
             getNextPage()
           }
@@ -92,13 +99,16 @@ export default function homeScreen({navigation}) {
         }}
         scrollEventThrottle={400}
       >
+
       <StoryContainer stories={stories} storyOnPress={storyOnPress} />
-        {
-          posts.map((item, index)=>{
-            return <Post key={Math.random().toString()} post={item} />
-          })
-        }
-      
+      <View style={{minHeight: windowHeight*1.5}}>
+      {
+        posts.map((item, index)=>{
+          return <Post key={Math.random().toString()} post={item} />
+        })
+      }
+      </View>
+        
       </ScrollView>
     </SafeAreaView>
     // <FlatList

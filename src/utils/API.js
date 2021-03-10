@@ -126,9 +126,30 @@ export async function addProductApi(proData) {
     data)
   .then(res => {
     console.log(res.data)
+    return res.data
   })
   .catch(err => {
     console.log(err);
   });
-  return ''
+
+  return DATA
+}
+
+export async function getAllProducts(catData) {
+
+  console.log(catData)
+  const DATA = await Axios.post(
+    "getAllProducts",
+    {
+      cat_id: catData
+    })
+  .then(res => {
+    console.log(res.data)
+    return res.data
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+  return DATA
 }

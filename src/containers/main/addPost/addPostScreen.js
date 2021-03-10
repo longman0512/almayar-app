@@ -12,6 +12,7 @@ import StoreContext from "../../../context/index";
 import Video from 'react-native-video';
 import moment from "moment";
 import DatePicker from 'react-native-date-picker'
+import {SCLAlert, SCLAlertButton} from 'react-native-scl-alert';
 
 const windowWidth = Dimensions.get('screen').width;
 
@@ -19,27 +20,29 @@ export default function addPostScreen() {
   const  { store, setStore } = React.useContext(StoreContext);
 
   const disTypeData = ["Fixed", "Percentage"];
-  const [proImage, setProImage] = React.useState("");
-  const [category, setCategory] = React.useState([]);
+  
   const [loading, setLoading] = React.useState(false);
+  const [modal, setModal] = React.useState(false);
+
+  const [category, setCategory] = React.useState([]);
   const [proName, setProName] = React.useState('');
   const [proPrice, setProPrice] = React.useState(0);
   const [selCat, setCat] = React.useState(null);
   const [orgCat, setOrgCat] = React.useState(null);
   const [proDescription, setProDescription] = React.useState('');
-  const [modal, setModal] = React.useState(false);
   const [imageFile, setImageFile] = React.useState('');
-  
-  const [btnDisable, setDisabled] = React.useState(true)
   const [discountType, selectDiscoutType] = React.useState('fixed')
   const [discountAmount, setDisAmount] = React.useState(0)
-  
-  const [displayDate, setDisplayDate] = React.useState(new Date());
   const [startDate, setStartDate] = React.useState(new Date());
   const [endDate, setEndDate] = React.useState(new Date());
-
   const [startFlag, setStartFlag] = React.useState(false);
   const [endFlag, setEndFlag] = React.useState(false);
+
+  const [alertFlag, setAlertFlag] = React.useState(false);
+  const [alertType, setAlertType] = React.useState('warning');
+  const [alertMsg, setAlertMSG] = React.useState('');
+  
+  const [btnDisable, setDisabled] = React.useState(true)
 
   React.useEffect(()=>{
     setLoading(true)
@@ -118,10 +121,23 @@ export default function addPostScreen() {
       valid_from: startDate,
       valid_to: endDate
     }).then((res)=>{
-      console.log(res)
+      console.log(res, "data from api")
+      if(!res.status){
+        showAlert('warning', res.msg)
+      } else {
+        showAlert('success', res.msg)
+        setProName('')
+        setProPrice(null)
+      }
     })
   }
-  
+
+  const showAlert = (type, msg) => {
+    setAlertType(type);
+    setAlertMSG(msg);
+    setAlertFlag(true);
+  };
+
   const changeRange = (d) => {
     console.log(d)
     const { startDate, endDate, date } = d;
@@ -153,6 +169,24 @@ export default function addPostScreen() {
       alignItems: "center",
       flex: 1
     }}>
+      <SCLAlert
+        theme={alertType}
+        show={alertFlag}
+        title="Lorem"
+        titleContainerStyle={{height: 0}}
+        subtitle={alertMsg}
+        onRequestClose={() => {
+          console.log('closed');
+        }}
+        subtitleStyle={{fontSize: 17}}>
+        <SCLAlertButton
+          theme={alertType}
+          onPress={() => {
+            setAlertFlag(false);
+          }}>
+          OK
+        </SCLAlertButton>
+      </SCLAlert>
       <Portal>
         <Dialog
           visible={modal}

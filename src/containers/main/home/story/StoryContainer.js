@@ -1,9 +1,9 @@
 import React, {version} from 'react';
-import {Image, View, Text, StyleSheet} from 'react-native';
+import {Image, View, Dimensions, StyleSheet} from 'react-native';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import StoryListItem from './StoryListItem';
 import colors from '../../../../res/colors';
-
+const windowHeight= Dimensions.get('screen').height;
 export default function StoryContainer({stories, storyOnPress}) {
   return (
     <View>

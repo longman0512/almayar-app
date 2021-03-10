@@ -1,7 +1,16 @@
 import React from 'react';
-import {View, Image, Text, ImageStore} from 'react-native';
+import {View, Image, StyleSheet, Dimensions} from 'react-native';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import images from 'res/images';
+import StoreContext from "../../../context/index";
+import Video from 'react-native-video';
+import { FlatGrid } from "react-native-super-grid";
+import colors from '../../../res/colors';
+import Loading from "../../../components/Loading"
+import { useNavigation } from '@react-navigation/native';
+
+const windowWidth = Dimensions.get('screen').width;
+
 const data = [
   {key: '1'},
   {key: '2'},
@@ -43,88 +52,64 @@ function Test() {
           }}
         />
       </View>
-      <View style={{flex: 1, flexDirection: 'row'}}>
-        <Image
-          source={images.pro4}
-          style={{
-            height: 150,
-            flex: 1,
-            marginEnd: 2,
-            marginBottom: 2,
-            alignItems: 'center',
-          }}
-        />
-        <Image
-          source={images.pro5}
-          style={{
-            height: 150,
-            flex: 1,
-            marginEnd: 2,
-            marginBottom: 2,
-            alignItems: 'center',
-          }}
-        />
-
-        <Image
-          source={images.pro6}
-          style={{
-            height: 150,
-            flex: 1,
-            //marginEnd: 2,
-            marginBottom: 2,
-            alignItems: 'center',
-          }}
-        />
-      </View>
-      <View style={{flex: 1, flexDirection: 'row'}}>
-        <View style={{flex: 1, flexDirection: 'column'}}>
-          <Image
-            source={images.pro7}
-            style={{
-              height: 150,
-              flex: 1,
-              marginEnd: 2,
-              marginBottom: 2,
-              alignItems: 'center',
-            }}
-          />
-          <Image
-            source={images.pro8}
-            style={{
-              height: 150,
-              flex: 1,
-              marginEnd: 2,
-              marginBottom: 2,
-              alignItems: 'center',
-            }}
-          />
-        </View>
-        <View style={{flex: 2}}>
-          <Image
-            source={images.pro9}
-            style={{
-              height: 150,
-              flex: 1,
-              //marginEnd: 2,
-              marginBottom: 2,
-              alignItems: 'center',
-            }}
-          />
-        </View>
-      </View>
     </View>
   );
 }
 
 export default function SearchGrid() {
+  const  { store, setStore } = React.useContext(StoreContext);
+  const [loading, setLoading] = React.useState(false);
+  var videoBuffer = ''
+  var videoError = ''
+
+  const navigation = useNavigation();
+
+  const viewProductDetail = (item) => {
+    setLoading(true)
+    setStore({
+      ...store,
+      ProductDetail: item
+    })
+    setLoading(false)
+    navigation.navigate('ProductDetail In Search')
+  }
+
   return (
-    <FlatList
-      data={data}
-      //style={{marginTop: 2, marginStart: 2}}
-      renderItem={({item, index}) => <Test />}
-      //numColumns={3}
-      indicatorStyle={'white'}
-      showsVerticalScrollIndicator={true}
-    />
+    <View
+    >
+      <Loading loading={loading}/>
+      <FlatGrid
+        itemDimension={windowWidth / 3 - 5}
+        style={{backgroundColor: 'rgb(242,242,242)'}}
+        data={typeof store.filteredProducts!='undefined'?store.filteredProducts:[]}
+        spacing={3}
+        keyExtractor={()=>{Math.random().toString()}}
+        renderItem={({ item }) => (
+          <View style={{position: "relative"}}
+          >
+            <TouchableOpacity
+              onPress={()=>{viewProductDetail(item)}}
+            >
+              {item.type =="video"?<Video source={{uri: item.imgUrl}}
+                onBuffer={videoBuffer}
+                repeat
+                rate={1.0}
+                onError={videoError}
+                style={Styles.postImg} />:<Image source={{ uri:  item.imgUrl}} style={Styles.postImg} />}
+            </TouchableOpacity>
+        </View>
+        )}
+      />
+    </View>
   );
 }
+
+const Styles = StyleSheet.create({
+  postImg: {
+    height: windowWidth / 3-5,
+    width: windowWidth / 3-5,
+    resizeMode: 'cover',
+    borderWidth: 1,
+    borderColor: colors.primary
+  },
+});
