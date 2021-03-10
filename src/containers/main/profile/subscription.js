@@ -11,9 +11,6 @@ import { editProfile } from "../../../utils/API"
 import Loading from "../../../components/Loading"
 import {SCLAlert, SCLAlertButton} from 'react-native-scl-alert';
 import StoreContext from "../../../context/index";
-import stripe from 'react-native-stripe-payments';
-
-stripe.setOptions({ publishingKey: 'pk_test_51IPvrnIAaIJ9dA25wOEBraCmlnC5wvRVlhji81uUEAatYTa9xmL7d9VTzJXcO3t5Hygt2b8fZjIRekXcTi4rRsOb0070y6LOUk' });
 
 export default function subscription() {
   const  { store, setStore } = React.useContext(StoreContext);
@@ -32,7 +29,7 @@ export default function subscription() {
     expYear: 21,
     cvc: '888',
   }
-
+  
   const hideDialog = () => {
     setModal(false);
   };
@@ -41,30 +38,10 @@ export default function subscription() {
     setModal(true);
   };
   
-  const checkValid = () =>{
-    const isCardValid = stripe.isCardValid({
-      number: '4242424242424242',
-      expMonth: 10,
-      expYear: 21,
-      cvc: '888',
-    });
-    if(isCardValid){
+  const checkValid = async () =>{
       payNow()
-    } else {
-      console.log("card is not valid")
-    }
   }
-  const payNow = () => {
-
-    stripe.confirmPayment('client_secret_from_backend', cardDetails)
-    .then(result => {
-      // result of type PaymentResult
-      console.log(result)
-    })
-    .catch(err =>
-      // error performing payment
-      console.log(catch)
-    )
+  const payNow = async () => {
   }
 
   const updateMembership = (amount, monthes) => {
