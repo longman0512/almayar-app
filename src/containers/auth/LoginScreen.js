@@ -95,7 +95,7 @@ export default function LoginScreen({navigation}) {
           placeholder="Phone number (+9647755526119)"
           placeholderTextColor={colors.textFaded2}
           onChangeText = {(txt)=>{setPhoneNumber(txt)}}
-          value = {'+9647755526199'}
+          value = {'+9647755526119'}
         />
       </View>
       <View style={Styles.passwordContainer}>

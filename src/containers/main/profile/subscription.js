@@ -3,10 +3,12 @@ import {View, Text, Dimensions, StyleSheet} from 'react-native';
 import palette from 'res/palette';
 import colors from '../../../res/colors';
 import images from '../../../res/images';
-import { Appbar, Menu, Portal, Card, Title, Dialog, Button, Divider } from 'react-native-paper';
+import { Appbar, Menu, Provider, Card, Title, Paragraph, Button, Divider } from 'react-native-paper';
 const data = [{key: '1'}];
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+<<<<<<< HEAD
+<<<<<<< HEAD
 import { editProfile } from "../../../utils/API"
 import Loading from "../../../components/Loading"
 import {SCLAlert, SCLAlertButton} from 'react-native-scl-alert';
@@ -54,29 +56,18 @@ export default function subscription() {
     setAlertFlag(true);
   };
 
+=======
+
+export default function subscription() {
+>>>>>>> parent of cf68fb1 (edit profile page is completed)
+=======
+
+export default function subscription() {
+>>>>>>> parent of cf68fb1 (edit profile page is completed)
   return (
     <View style={{width: windowWidth, height: windowHeight, justifyContent: "center", alignItems: "center"}}>
-      <Loading loading={loading}/>
-      <Portal>
-        <Dialog
-          visible={modal}
-          onDismiss={hideDialog}
-          style={{width: (windowWidth - 50), marginHorizontal: (windowWidth - (windowWidth-50)) / 2}}>
-          {/* <Dialog.Content> */}
-          <Card>
-            <Card.Content style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-around"}}>
-              <Button icon="check" mode="contained" style={{marginHorizontal: 10}} color={colors.primary} onPress={checkValid} labelStyle={{color: "white"}}>
-                Pay
-              </Button>
-              <Button mode="outlined" style={{marginHorizontal: 10}} color={colors.primary} onPress={hideDialog} labelStyle={{color: colors.primary}}>
-                Cancel
-              </Button>
-            </Card.Content>
-          </Card>
-        </Dialog>
-      </Portal>
       <View style={{ width: "80%", height: "80%", margin: 10, padding: 10}}>
-        <Card style={{marginBottom: 20}} onPress={()=>{updateMembership(50, 1)}}>
+        <Card style={{marginBottom: 20}} onPress={()=>{console.log("month")}}>
           <Card.Content>
             <Title style={Styles.titleContainer}>Monthly Plan</Title>
             <Divider style={Styles.dividerStyle}/>
@@ -88,12 +79,12 @@ export default function subscription() {
             </View>
           </Card.Content>
         </Card>
-        <Card style={{marginBottom: 20}} onPress={()=>{updateMembership(300, 12)}}>
+        <Card style={{marginBottom: 20}} onPress={()=>{console.log("anual")}}>
           <Card.Content>
             <Title style={Styles.titleContainer}>Annual Plan</Title>
             <Divider style={Styles.dividerStyle}/>
             <View style={Styles.priceContainer}>
-              <Text style={Styles.des}>$</Text><Text style={Styles.priceNum}>300</Text><Text style={Styles.des_type}>/Year</Text>
+              <Text style={Styles.des}>$</Text><Text style={Styles.priceNum}>300</Text><Text style={Styles.des_type}>/Month</Text>
             </View>
             <View style={Styles.description}>
               <Text>Save 50%!</Text>

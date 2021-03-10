@@ -11,26 +11,9 @@ import ProfileGrid from './ProfileGrid';
 import colors from '../../../res/colors';
 import GridIcon from './gridIcon';
 import { Appbar, Menu, Provider } from 'react-native-paper';
-import StoreContext from "../../../context/index";
-import { getProfileInfo } from '../../../utils/API';
-import Loading from "../../../components/Loading"
-
 const data = [{key: '1'}];
 
 export default function profileScreen() {
-  const  { store, setStore } = React.useContext(StoreContext);
-  const [loading, setLoading] = React.useState(false);
-  React.useEffect(()=>{
-    setLoading(true)
-    getProfileInfo(store.userInfo).then(res=>{
-      setStore({
-        ...store,
-        userProfile: res.data
-      })
-      setLoading(false)
-    })
-    
-  }, [])
   return (
     <Provider>
     <FlatList
@@ -43,15 +26,14 @@ export default function profileScreen() {
       <ProfileGrid />*/
       data={data}
       renderItem={() => (
-        
         <>
-        {
-          typeof store.userProfile!="undefiend"?[<Loading loading={loading}/>,
-            <ProfileHeader />,
-            <UserBio />,
-            <ProfileGrid />]:null
-        }
-          
+          <ProfileHeader />
+          <UserBio />
+          {/* <EditProfileButton /> */}
+          {/* <ConstantStories /> */}
+          {/* <LineSeperator /> */}
+          {/* <GridIcon /> */}
+          <ProfileGrid />
         </>
       )}
     />

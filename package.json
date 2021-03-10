@@ -39,9 +39,15 @@
     "react-native-scl-alert": "^1.2.1",
     "react-native-screens": "^2.10.1",
     "react-native-shimmer": "^0.6.0",
+<<<<<<< HEAD
+<<<<<<< HEAD
     "react-native-stripe-api": "^0.1.0",
     "react-native-stripe-checkout": "0.0.15",
     "react-native-super-grid": "^4.1.1",
+=======
+>>>>>>> parent of cf68fb1 (edit profile page is completed)
+=======
+>>>>>>> parent of cf68fb1 (edit profile page is completed)
     "react-native-vector-icons": "^7.0.0",
     "react-native-video": "^5.1.1",
     "react-native-webview": "^10.6.0",
@@ -59,11 +65,6 @@
     "nyc": "^15.1.0",
     "react-test-renderer": "16.13.1",
     "regenerator-runtime": "^0.13.7"
-  },
-  "rnpm": {
-    "assets": [
-      "./assets/fonts"
-    ]
   },
   "jest": {
     "preset": "react-native",

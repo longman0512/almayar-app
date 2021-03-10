@@ -13,7 +13,7 @@ export default function UserBio() {
         marginTop: 20,
       }}>
       <View style={{marginBottom: 5}}>
-        <Text style={{color: 'black', fontWeight: 'bold', fontSize: 18}}>{store.publicUserInfo.info.u_f_name?store.publicUserInfo.info.u_f_name+" "+store.publicUserInfo.info.u_l_name:store.publicUserInfo.info.u_name}</Text>
+        <Text style={{color: 'black', fontWeight: 'bold', fontSize: 18}}>{store.publicUserInfo.info.u_name}</Text>
       </View>
       <View style={{marginBottom: 5, fontSize: 14}}>
         <Text style={{color: 'black', marginBottom: 20}}>

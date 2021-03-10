@@ -172,7 +172,7 @@ export default function addPostScreen() {
       <SCLAlert
         theme={alertType}
         show={alertFlag}
-        title="Al Mayar"
+        title="Lorem"
         titleContainerStyle={{height: 0}}
         subtitle={alertMsg}
         onRequestClose={() => {

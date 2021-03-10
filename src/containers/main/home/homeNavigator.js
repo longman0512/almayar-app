@@ -38,7 +38,7 @@ export default function () {
           headerLeft: () => (
             <View style={Styles.headerLeftContainer}>
               <TouchableOpacity
-                onPress={() => navigation.navigate('AddPost')}>
+                onPress={() => navigation.navigate('AddProduct')}>
                 <Image
                   source={images.addIcon}
                   style={Styles.headerLeftImage}

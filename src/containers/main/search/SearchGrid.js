@@ -75,7 +75,8 @@ export default function SearchGrid() {
   }
 
   return (
-    <View>
+    <View
+    >
       <Loading loading={loading}/>
       <FlatGrid
         itemDimension={windowWidth / 3 - 5}
@@ -84,7 +85,8 @@ export default function SearchGrid() {
         spacing={3}
         keyExtractor={()=>{Math.random().toString()}}
         renderItem={({ item }) => (
-          <View style={{position: "relative"}}>
+          <View style={{position: "relative"}}
+          >
             <TouchableOpacity
               onPress={()=>{viewProductDetail(item)}}
             >
