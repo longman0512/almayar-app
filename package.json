@@ -21,9 +21,9 @@
     "moment": "^2.29.1",
     "react": "16.13.1",
     "react-native": "^0.63.2",
-    "react-native-awesome-card-io": "^0.9.0",
     "react-native-camera": "^3.36.0",
     "react-native-credit-card-input": "^0.4.1",
+    "react-native-credit-card-input-fullpage": "^0.2.0",
     "react-native-date-picker": "^3.2.10",
     "react-native-dropdown-picker": "^4.0.2",
     "react-native-elements": "^3.1.0",
@@ -39,19 +39,11 @@
     "react-native-scl-alert": "^1.2.1",
     "react-native-screens": "^2.10.1",
     "react-native-shimmer": "^0.6.0",
-<<<<<<< HEAD
-<<<<<<< HEAD
     "react-native-stripe-api": "^0.1.0",
-    "react-native-stripe-checkout": "0.0.15",
     "react-native-super-grid": "^4.1.1",
-=======
->>>>>>> parent of cf68fb1 (edit profile page is completed)
-=======
->>>>>>> parent of cf68fb1 (edit profile page is completed)
     "react-native-vector-icons": "^7.0.0",
     "react-native-video": "^5.1.1",
-    "react-native-webview": "^10.6.0",
-    "tipsi-stripe": "^8.0.2"
+    "react-native-webview": "^10.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.11.1",
@@ -65,6 +57,11 @@
     "nyc": "^15.1.0",
     "react-test-renderer": "16.13.1",
     "regenerator-runtime": "^0.13.7"
+  },
+  "rnpm": {
+    "assets": [
+      "./assets/fonts"
+    ]
   },
   "jest": {
     "preset": "react-native",

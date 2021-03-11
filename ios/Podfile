@@ -14,8 +14,6 @@ target 'Instagram' do
 
   pod 'react-native-date-picker', :path => '../node_modules/react-native-date-picker'
 
-  pod 'RNAwesomeCardIO', :path => '../node_modules/react-native-awesome-card-io'
-
   target 'InstagramTests' do
     inherit! :complete
     # Pods for testing

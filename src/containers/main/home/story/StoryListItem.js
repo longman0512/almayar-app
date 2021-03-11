@@ -54,8 +54,8 @@ export default function StoryListItem({item, storyOnPress}) {
           style={{borderRadius: 100, padding: 2}}>
           <View style={{borderWidth: 2, borderColor: "white", borderRadius: 100}}>
             {
-              item.u_avatar!=''?<Image
-                  source={item.u_avatar?{uri: "http://192.168.110.121:8000/images/avatar/9647755526119.jpg"}:images.avatar}
+              item.u_avatar?<Image
+                  source={{uri: item.u_avatar}}
                   style={{width: 55, height: 55, borderRadius: 70}}
                 />:<Text style={{width: 55, height: 55, borderRadius: 70, textAlignVertical:"center", textAlign: "center", fontSize: 30, color: "white"}}>{item.u_name[0]+item.u_name[1]}</Text>
             }

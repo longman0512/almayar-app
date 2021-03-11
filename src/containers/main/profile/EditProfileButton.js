@@ -2,8 +2,11 @@ import React from 'react';
 import {View, Text} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import colors from '../../../res/colors';
+import StoreContext from "../../../context/index";
 
 export default function EditProfileButton() {
+  const  { store, setStore } = React.useContext(StoreContext);
+
   return (
     <TouchableOpacity>
       <View style={{marginTop: 10}}>

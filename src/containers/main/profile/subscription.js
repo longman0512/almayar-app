@@ -3,16 +3,19 @@ import {View, Text, Dimensions, StyleSheet} from 'react-native';
 import palette from 'res/palette';
 import colors from '../../../res/colors';
 import images from '../../../res/images';
-import { Appbar, Menu, Provider, Card, Title, Paragraph, Button, Divider } from 'react-native-paper';
+import { Appbar, Menu, Portal, Card, Title, Dialog, Button, Divider } from 'react-native-paper';
 const data = [{key: '1'}];
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-<<<<<<< HEAD
-<<<<<<< HEAD
-import { editProfile } from "../../../utils/API"
+import { upgradeMembership } from "../../../utils/API"
 import Loading from "../../../components/Loading"
 import {SCLAlert, SCLAlertButton} from 'react-native-scl-alert';
 import StoreContext from "../../../context/index";
+import Stripe from 'react-native-stripe-api';
+import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
+
+const apiKey = 'sk_test_51IPvrnIAaIJ9dA25lOk4dDB0RRLvkDYb1LF9pITxtcl67oiVpoHA3tycYgnUn01SDHmg8VAIzhOUaDfxV7JpMN4X00Odeh68UU';
+const client = new Stripe(apiKey);
 
 export default function subscription() {
   const  { store, setStore } = React.useContext(StoreContext);
@@ -24,14 +27,8 @@ export default function subscription() {
   const [alertMsg, setAlertMSG] = React.useState('');
 
   const [payAmount, setPayAmount] = React.useState(0);
+  const [cardInfo, setCardInfo] = React.useState(0);
 
-  const cardDetails = {
-    number: '4242424242424242',
-    expMonth: 10,
-    expYear: 21,
-    cvc: '888',
-  }
-  
   const hideDialog = () => {
     setModal(false);
   };
@@ -41,33 +38,72 @@ export default function subscription() {
   };
   
   const checkValid = async () =>{
-      payNow()
+    if(cardInfo.status.cvc == "valid" && cardInfo.status.expiry == 'valid' && cardInfo.status.number == "valid"){
+      setLoading(true)
+      const token = await client.createToken({
+        number: cardInfo.values.number,
+        exp_month: cardInfo.values.expiry[0]+cardInfo.values.expiry[1], 
+        exp_year: cardInfo.values.expiry[3]+cardInfo.values.expiry[4], 
+        cvc: cardInfo.values.cvc,
+     });
+     
+     console.log(token)
+     
+     upgradeMembership(token.id, payAmount, store.userInfo).then(res=>{
+       console.log(res)
+       setLoading(false)
+       if(res.status){
+        showAlert('success', res.msg)
+       } else {
+        showAlert('warning', res.msg)
+       }
+     })
+    } else {
+      showAlert('warning', "Please check card info, it is invalid")
+    }
+    
   }
-  const payNow = async () => {
+  const payNow = () => {
+
   }
 
   const updateMembership = (amount, monthes) => {
-    setPayAmount(amount)
+    setPayAmount(monthes)
     showDialog()
   }
+
   const showAlert = (type, msg) => {
     setAlertType(type);
     setAlertMSG(msg);
     setAlertFlag(true);
   };
 
-=======
-
-export default function subscription() {
->>>>>>> parent of cf68fb1 (edit profile page is completed)
-=======
-
-export default function subscription() {
->>>>>>> parent of cf68fb1 (edit profile page is completed)
   return (
     <View style={{width: windowWidth, height: windowHeight, justifyContent: "center", alignItems: "center"}}>
+      <Loading loading={loading}/>
+      <Portal>
+        <Dialog
+          visible={modal}
+          onDismiss={hideDialog}
+          style={{width: (windowWidth - 50), height: windowHeight-200, marginHorizontal: (windowWidth - (windowWidth-50)) / 2}}>
+          {/* <Dialog.Content> */}
+          <Card>
+            <Card.Content style={{flexDirection: 'column', alignItems: 'center', justifyContent: "space-around"}}>
+              <CreditCardInput onChange={(d)=>{setCardInfo(d)}} style={{height: 200}}/>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-around"}}>
+                <Button icon="check" mode="contained" style={{marginHorizontal: 10}} color={colors.primary} onPress={checkValid} labelStyle={{color: "white"}}>
+                  Pay
+                </Button>
+                <Button mode="outlined" style={{marginHorizontal: 10}} color={colors.primary} onPress={hideDialog} labelStyle={{color: colors.primary}}>
+                  Cancel
+                </Button>
+              </View>
+            </Card.Content>
+          </Card>
+        </Dialog>
+      </Portal>
       <View style={{ width: "80%", height: "80%", margin: 10, padding: 10}}>
-        <Card style={{marginBottom: 20}} onPress={()=>{console.log("month")}}>
+        <Card style={{marginBottom: 20}} onPress={()=>{updateMembership(50, 1)}}>
           <Card.Content>
             <Title style={Styles.titleContainer}>Monthly Plan</Title>
             <Divider style={Styles.dividerStyle}/>
@@ -79,12 +115,12 @@ export default function subscription() {
             </View>
           </Card.Content>
         </Card>
-        <Card style={{marginBottom: 20}} onPress={()=>{console.log("anual")}}>
+        <Card style={{marginBottom: 20}} onPress={()=>{updateMembership(300, 12)}}>
           <Card.Content>
             <Title style={Styles.titleContainer}>Annual Plan</Title>
             <Divider style={Styles.dividerStyle}/>
             <View style={Styles.priceContainer}>
-              <Text style={Styles.des}>$</Text><Text style={Styles.priceNum}>300</Text><Text style={Styles.des_type}>/Month</Text>
+              <Text style={Styles.des}>$</Text><Text style={Styles.priceNum}>300</Text><Text style={Styles.des_type}>/Year</Text>
             </View>
             <View style={Styles.description}>
               <Text>Save 50%!</Text>
