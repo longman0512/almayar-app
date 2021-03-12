@@ -34,42 +34,47 @@ export default function ProfileGrid() {
       <ActivityIndicator animating={true} />
     </Overlay>
     <FlatGrid
-        itemDimension={windowWidth / 3 - 5}
-        style={{backgroundColor: 'white'}}
-        data={store.userProfile?.products}
-        spacing={3}
-        keyExtractor={()=>{Math.random().toString()}}
-        renderItem={({ item }) => (
-          <View style={{position: "relative"}}>
-            <TouchableOpacity
-              onPress={()=>{viewProductDetail(item)}}
-            >
-              {item.pro_type =="video"?<Video source={{uri: item.imgUrl}}
-                onBuffer={videoBuffer}
-                repeat
-                rate={1.0}
-                onError={videoError}
-                style={Styles.postImg} />:<Image source={{ uri:  item.imgUrl}} style={Styles.postImg} />}
-              {
-                item.pro_status == "draft"?<Text style = {Styles.draftText}>Draft</Text>:null
-              }
-            </TouchableOpacity>
-        </View>
-        )}
+      itemDimension={windowWidth / 3 - 5}
+      style={{backgroundColor: 'white'}}
+      data={store.userProfile?.products}
+      spacing={3}
+      keyExtractor={()=>{Math.random().toString()}}
+      renderItem={({ item }) => (
+        <View style={{position: "relative"}}>
+          <TouchableOpacity
+            onPress={()=>{viewProductDetail(item)}}
+          >
+            {item.pro_type =="video"?<Video source={{uri: item.imgUrl}}
+              onBuffer={videoBuffer}
+              repeat
+              rate={1.0}
+              onError={videoError}
+              style={Styles.postVid} />:<Image source={{ uri:  item.imgUrl}} style={Styles.postImg} />}
+            {
+              item.pro_status == "draft"?<Text style = {Styles.draftText}>Draft</Text>:null
+            }
+            {
+              item.likeCount?<View style={Styles.likeContainer}>
+                <Image source={images.like_full} style={Styles.actionIcons} />
+                <Text style = {Styles.likeText}>{item.likeCount}</Text>
+              </View>:null
+            }
+            
+          </TouchableOpacity>
+      </View>
+      )}
       />
     </>
-    // <FlatList
-    //   data={store.publicUserInfo.products}
-    //   style={{marginTop: 2, marginStart: 2}}
-    //   renderItem={({item, index}) => <Test item={item}/>}
-    //   numColumns={3}
-    //   indicatorStyle={'black'}
-    //   showsVerticalScrollIndicator={true}
-    // />
   );
 }
 
 const Styles = StyleSheet.create({
+  postVid: {
+    height: windowWidth / 3-5,
+    width: windowWidth / 3-5,
+    borderWidth: 1,
+    borderColor: colors.primary
+  },
   postImg: {
     height: windowWidth / 3-5,
     width: windowWidth / 3-5,
@@ -85,5 +90,23 @@ const Styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: "rgba(0,0,0, 0.2)",
     color: colors.primary
+  },
+  likeText:{
+    color: colors.primary
+  },
+  actionIcons: {
+    width: 23,
+    height: 23,
+    marginEnd: 10
+  },
+  likeContainer: {
+    position: 'absolute',
+    bottom: 2, 
+    right: 3,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: "rgba(0,0,0, 0.2)",
   }
 });

@@ -49,7 +49,7 @@ export default function ProfileGrid() {
                 repeat
                 rate={1.0}
                 onError={videoError}
-                style={Styles.postImg} />:<Image source={{ uri:  item.imgUrl}} style={Styles.postImg} />}
+                style={Styles.postVid} />:<Image source={{ uri:  item.imgUrl}} style={Styles.postImg} />}
                 {
                   item.pro_status == "draft"?<Text style = {Styles.draftText}>Draft</Text>:null
                 }
@@ -62,6 +62,13 @@ export default function ProfileGrid() {
 }
 
 const Styles = StyleSheet.create({
+  postVid: {
+    height: windowWidth / 3-5,
+    width: windowWidth / 3-5,
+    resizeMode: 'cover',
+    borderWidth: 1,
+    borderColor: colors.primary
+  },
   postImg: {
     height: windowWidth / 3-5,
     width: windowWidth / 3-5,

@@ -136,6 +136,47 @@ export async function addProductApi(proData) {
   return DATA
 }
 
+export async function editProductApi(proData) {
+  var data = new FormData();
+  data.append('api_key', ' admin@1474?');
+  data.append('category', proData.category);
+  data.append('pro_id', proData.pro_id);
+  data.append('pro_name', proData.pro_name);
+  data.append('pro_price', proData.pro_price);
+  data.append('pro_description', proData.pro_description);
+  data.append('pro_discount_type', proData.pro_discount_type);
+  data.append('pro_discount_amount', proData.pro_discount_amount);
+  data.append('user_id', proData.user_id);
+  data.append('pro_type', proData.pro_media.mime.substring(0, 5));
+  data.append('valid_from', proData.valid_from.toDateString());
+  data.append('valid_to', proData.valid_to.toDateString());
+  data.append('pro_status', proData.pro_status);
+  data.append('user_id', proData.user_id);
+  data.append('image_changed', proData.image_changed);
+  if(proData.image_changed == 1)
+  data.append('pro_media',
+  {
+      uri: proData.pro_media.path,
+      name:'products',
+      type: proData.pro_media.mime, 
+  });
+
+  console.log(data, "edit in api")
+
+  const DATA = await Axios.post(
+    proData.image_changed==1?"editProductWithImage":"editProduct",
+    data)
+  .then(res => {
+    console.log(res.data)
+    return res.data
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+  return DATA
+}
+
 export async function getAllProducts(catData) {
 
   console.log(catData)

@@ -104,7 +104,7 @@ export default function productDetailscreen() {
                 repeat
                 rate={1.0}
                 onError={videoError}
-                style={Styles.postImg} />:<Image source={{uri: store.ProductDetail.imgUrl}} style={Styles.postImg} />
+                style={Styles.postVid} />:<Image source={{uri: store.ProductDetail.imgUrl}} style={Styles.postImg} />
               }
             {/* <Image source={{uri: store.ProductDetail.imgUrl}} style={Styles.postImg} /> */}
             {/* {
@@ -162,12 +162,17 @@ export default function productDetailscreen() {
 }
 
 const Styles = StyleSheet.create({
-    postImg: {
-      height: Dimensions.get('screen').height / 3,
-      width: Dimensions.get('screen').width,
-      resizeMode: 'cover',
-      marginTop: 20
-    },
+  postVid: {
+    height: Dimensions.get('screen').height / 3,
+    width: Dimensions.get('screen').width,
+    marginTop: 20
+  },
+  postImg: {
+    height: Dimensions.get('screen').height / 3,
+    width: Dimensions.get('screen').width,
+    resizeMode: 'cover',
+    marginTop: 20
+  },
     actionIcons: {
         width: 23,
         height: 23,

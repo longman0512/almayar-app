@@ -8,6 +8,7 @@ import subscription from './subscription';
 import FollwersScreen from './FollowerScreen/FollwersScreen';
 import FollowingScreen from './FollowingScreen/FollowingScreen';
 import publicProfileScreen from './publicProfile/publicProfileScreen';
+import editProduct from './editProduct/editProduct';
 import {Text, View, Image} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import colors from 'res/colors';
@@ -28,7 +29,7 @@ export default function profileNavigator() {
       />
       <Stack.Screen
         name="UserProductDetail"
-        component={productDetailscreen}
+        component={editProduct}
         options={{
           header: (props) => <CustomNavigationBar {...props} />,
         }}

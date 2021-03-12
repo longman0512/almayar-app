@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import {View, Text, Image, StyleSheet, TextInput, Dimensions} from 'react-native';
-import colors from '../../../res/colors';
-import images from '../../../res/images';
+import colors from '../../../../res/colors';
+import images from '../../../../res/images';
 import { Card, Button, Dialog, Portal } from 'react-native-paper';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import ModalDropdown from 'react-native-modal-dropdown';
-import { getCategories, addProductApi } from "../../../utils/API"
-import Loading from "../../../components/Loading"
+import { getCategories, editProductApi } from "../../../../utils/API"
+import Loading from "../../../../components/Loading"
 import ImagePicker from 'react-native-image-crop-picker';
-import StoreContext from "../../../context/index";
+import StoreContext from "../../../../context/index";
 import Video from 'react-native-video';
 import moment from "moment";
 import DatePicker from 'react-native-date-picker'
@@ -16,28 +16,32 @@ import {SCLAlert, SCLAlertButton} from 'react-native-scl-alert';
 
 const windowWidth = Dimensions.get('screen').width;
 
-export default function addPostScreen() {
+export default function editProduct() {
   const  { store, setStore } = React.useContext(StoreContext);
 
-  const disTypeData = ["Fixed", "Percentage"];
-  
+  const disTypeData = ["fixed", "percentage"];
+  const proStatusData = ['draft', 'publish'];
+
   const [loading, setLoading] = React.useState(false);
   const [modal, setModal] = React.useState(false);
-
   const [category, setCategory] = React.useState([]);
-  const [proName, setProName] = React.useState('');
-  const [proPrice, setProPrice] = React.useState(0);
+  const [defaultCateName, setDefaultCategory] = React.useState('');
+  const [proName, setProName] = React.useState(store.ProductDetail.pro_name);
+  const [proPrice, setProPrice] = React.useState(store.ProductDetail.pro_price.toString());
+  const [proStatus, setProstatus] = React.useState(store.ProductDetail.pro_status);
   const [selCat, setCat] = React.useState(null);
   const [orgCat, setOrgCat] = React.useState(null);
-  const [proDescription, setProDescription] = React.useState('');
-  const [imageFile, setImageFile] = React.useState('');
-  const [discountType, selectDiscoutType] = React.useState('fixed')
-  const [discountAmount, setDisAmount] = React.useState(0)
+  const [proDescription, setProDescription] = React.useState(store.ProductDetail.pro_description);
+  const [imageFile, setImageFile] = React.useState({
+    path: store.ProductDetail.imgUrl,
+    mime: store.ProductDetail.type
+  });
+  const [discountType, selectDiscoutType] = React.useState(store.ProductDetail.discount?.dis_type)
+  const [discountAmount, setDisAmount] = React.useState(store.ProductDetail.discount?.dis_mount.toString())
   const [startDate, setStartDate] = React.useState(new Date());
   const [endDate, setEndDate] = React.useState(new Date());
   const [startFlag, setStartFlag] = React.useState(false);
   const [endFlag, setEndFlag] = React.useState(false);
-
   const [alertFlag, setAlertFlag] = React.useState(false);
   const [alertType, setAlertType] = React.useState('warning');
   const [alertMsg, setAlertMSG] = React.useState('');
@@ -48,7 +52,6 @@ export default function addPostScreen() {
     setLoading(true)
     getCategories().then(res=>{
       setLoading(false)
-      console.log(res)
       if(res?.data?.length){
         var temp = []
         res.data.map((cat, index)=>{
@@ -57,8 +60,18 @@ export default function addPostScreen() {
         })
         setOrgCat(res.data)
         setCategory(temp)
+        res.data.map((cat, index)=>{
+          if(cat.cat_id == store.ProductDetail.cat_id){
+            setCat(cat.cat_id)
+            setDefaultCategory(cat.cat_name)
+          }
+        })
       }
     })
+    if(store.ProductDetail.discount?.dis_validate_from){
+      setStartDate(new Date(store.ProductDetail.discount?.dis_validate_from?.substring(0, 10)))
+      setEndDate(new Date(store.ProductDetail.discount?.dis_validate_to?.substring(0, 10)))
+    }
   }, [])
   useEffect(()=>{
     if(!selCat || !proName || !proPrice || !imageFile){
@@ -79,11 +92,8 @@ export default function addPostScreen() {
   const PickLibrary = () => {
     hideDialog();
     ImagePicker.openPicker({
-      // cropping: true,
-      // cropperCircleOverlay: true,
       mediaType: 'any',
     }).then((image) => {
-      console.log(image);
       setImageFile(image);
     });
   };
@@ -91,11 +101,8 @@ export default function addPostScreen() {
   const PickCamera = () => {
     hideDialog();
     ImagePicker.openCamera({
-      // cropping: true,
-      // cropperCircleOverlay: true,
       mediaType: 'any',
     }).then((image) => {
-      console.log(image);
       setImageFile(image);
     });
   };
@@ -108,9 +115,11 @@ export default function addPostScreen() {
     setModal(true);
   };
 
-  const addProduct = ()=> {
-    addProductApi({
+  const updateProduct = ()=> {
+    setLoading(true)
+    editProductApi({
       category: selCat,
+      pro_id: store.ProductDetail.pro_id,
       pro_name: proName,
       pro_price: proPrice,
       pro_description: proDescription,
@@ -119,21 +128,23 @@ export default function addPostScreen() {
       pro_media: imageFile,
       user_id: store.userInfo,
       valid_from: startDate,
-      valid_to: endDate
+      valid_to: endDate,
+      pro_status: proStatus,
+      image_changed: store.ProductDetail.imgUrl==imageFile.path?0:1
     }).then((res)=>{
       console.log(res, "data from api")
+      setLoading(false)
       if(!res.status){
         showAlert('warning', res.msg)
       } else {
-        setProName('')
-        setProPrice(null)
-        setProDescription('')
-        setImageFile("")
-        selectDiscoutType("fixed")
-        setDisAmount(0)
-        setStartFlag(false)
-        setEndFlag(false)
         showAlert('success', res.msg)
+        setStore({
+          ...store,
+          userProfile: res.data
+        })
+        res.data.products.map((pro, index)=>{
+          console.log(pro)
+        })
       }
     })
   }
@@ -145,9 +156,7 @@ export default function addPostScreen() {
   };
 
   const changeRange = (d) => {
-    console.log(d)
     const { startDate, endDate, date } = d;
-    console.log( startDate, endDate, date)
     if(typeof startDate != 'undefined' && startDate){
       setStartDate(startDate)
     }
@@ -155,7 +164,6 @@ export default function addPostScreen() {
       setEndDate(endDate)
     }
     if(typeof date != 'undefined' && date){
-      // setDisplayDate(date)
     }
   }
   
@@ -182,7 +190,6 @@ export default function addPostScreen() {
         titleContainerStyle={{height: 0}}
         subtitle={alertMsg}
         onRequestClose={() => {
-          console.log('closed');
         }}
         subtitleStyle={{fontSize: 17}}>
         <SCLAlertButton
@@ -258,13 +265,13 @@ export default function addPostScreen() {
         showsVerticalScrollIndicator={false}
       >
         {
-          imageFile==""?<Card style={{marginBottom: 20, height: 200, width: (windowWidth-30), flexDirection: "row", justifyContent: "center", alignItems: "center"}} onPress={()=>{console.log("month"); showDialog(true)}}>
+          imageFile==""?<Card style={{marginBottom: 20, height: 200, width: (windowWidth-30), flexDirection: "row", justifyContent: "center", alignItems: "center"}} onPress={()=>{ showDialog(true)}}>
           <Card.Content>
             <View style={Styles.btnTextContainer}>
               <Text style={Styles.btnText}>Image/Video</Text>
             </View>
           </Card.Content>
-          </Card>:<Card style={{marginBottom: 20, height: 200, width: (windowWidth-30), flexDirection: "row", justifyContent: "center", alignItems: "center", padding: 0}} onPress={()=>{console.log("month"); setImageFile("")}}>
+          </Card>:<Card style={{marginBottom: 20, height: 200, width: (windowWidth-30), flexDirection: "row", justifyContent: "center", alignItems: "center", padding: 0}} onPress={()=>{ setImageFile("")}}>
             {
               imageFile?.mime.indexOf('vide')>=0?<Video source={{uri: imageFile.path}}
               onBuffer={videoBuffer}
@@ -275,13 +282,26 @@ export default function addPostScreen() {
           </Card>
         }
         <View style={Styles.groupContainer}>
+          <Text style={Styles.labelContainer}>* Status</Text>
+          <ModalDropdown
+            options={proStatusData}
+            defaultValue="Select Category..."
+            style={Styles.dropdownContainer}
+            textStyle={{width: "100%", height: "100%", textAlignVertical: 'center', fontSize: 18}}
+            defaultValue={proStatus}
+            dropdownStyle={{width: "88%"}}
+            dropdownTextStyle={{fontSize: 18}}
+            onSelect={(item)=>{setProstatus(proStatusData[item])}}
+          />
+        </View>
+        <View style={Styles.groupContainer}>
           <Text style={Styles.labelContainer}>* Category</Text>
           <ModalDropdown
             options={category}
             defaultValue="Select Category..."
             style={Styles.dropdownContainer}
             textStyle={{width: "100%", height: "100%", textAlignVertical: 'center', fontSize: 18}}
-            defaultIndex={0}
+            defaultValue={defaultCateName}
             dropdownStyle={{width: "88%"}}
             dropdownTextStyle={{fontSize: 18}}
             onSelect={(item)=>{selectCat(item)}}
@@ -293,6 +313,7 @@ export default function addPostScreen() {
             style={Styles.textInputContainer}
             placeholder={"Product Name"}
             onChangeText = {(txt)=>{setProName(txt)}}
+            value = {proName}
           />
         </View>
         <View style={Styles.groupContainer}>
@@ -303,15 +324,11 @@ export default function addPostScreen() {
               style={Styles.priceInputContainer}
               placeholder={"Price"}
               onChangeText = {(txt)=>{setProPrice(txt)}}
+              value = {proPrice}
             />
             <Text style={{position: 'absolute', left: 5, top: 7, fontSize: 16, color: "gray"}}>$</Text>
           </View>
         </View>
-        {/* <View style={Styles.groupContainer}>
-          <Text style={Styles.labelContainer}>City</Text>
-          <TextInput
-            style={Styles.textInputContainer} placeholder={"City"}/>
-        </View> */}
         <View style={Styles.groupContainer}>
           <Text style={Styles.labelContainer}>Description</Text>
           <TextInput
@@ -319,16 +336,17 @@ export default function addPostScreen() {
             placeholder={"Description"}
             multiline
             onChangeText = {(txt)=>{setProDescription(txt)}}
+            value = {proDescription}
           />
         </View>
         <View style={{flexDirection: "row", justifyContent: 'space-between', width: (windowWidth-45)}}>
           <View style={{width: "47%"}}>
             <Text style={Styles.labelContainer}>Discount</Text>
             <ModalDropdown
-              options={["Fixed", "Percentage"]}
+              options={disTypeData}
               style={Styles.dropdownContainer}
               textStyle={{width: "100%", height: "100%", textAlignVertical: 'center', fontSize: 18}}
-              defaultIndex={1}
+              defaultValue={discountType}
               dropdownStyle={{width: "40%"}}
               dropdownTextStyle={{fontSize: 18}}
               onSelect={(item)=>{selectDiscoutType(disTypeData[item])}}
@@ -343,8 +361,9 @@ export default function addPostScreen() {
                   style={Styles.discountInputContainer}
                   placeholder={"Amount"}
                   onChangeText = {(txt)=>{setDisAmount(txt)}}
+                  value={discountAmount}
                 />
-                <Text style={{position: 'absolute', left: 5, top: 7, fontSize: 16, color: "gray"}}>{discountType=="Fixed"?'$':'%'}</Text>
+                <Text style={{position: 'absolute', left: 5, top: 7, fontSize: 16, color: "gray"}}>{discountType=="fixed"?'$':'%'}</Text>
               </View>
             </View>
           </View>
@@ -369,8 +388,8 @@ export default function addPostScreen() {
         }
         
         <View style={Styles.groupContainer}>
-          <Button icon="publish" mode="contained" color={colors.primary} onPress={() => addProduct()} labelStyle={{color: "white"}} disabled={btnDisable} style={{marginTop: 30}}>
-            Publish
+          <Button icon="publish" mode="contained" color={colors.primary} onPress={() => updateProduct()} labelStyle={{color: "white"}} disabled={btnDisable} style={{marginTop: 30}}>
+            Update Product
           </Button>
         </View>
       </ScrollView>

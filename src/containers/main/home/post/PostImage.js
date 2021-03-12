@@ -28,7 +28,6 @@ export default function PostImage({post}) {
     // })
   }
   var videoBuffer = ''
-  var videoError = ''
   console.log(post)
   return  <>
             <Overlay isVisible={loading}>
@@ -41,8 +40,7 @@ export default function PostImage({post}) {
                 onBuffer={videoBuffer}
                 repeat
                 rate={1.0}
-                onError={videoError}
-                style={Styles.postImg} />:<Image source={{uri: post.imgUrl}} style={Styles.postImg} />
+                style={Styles.postVid} />:<Image source={{uri: post.imgUrl}} style={Styles.postImg} />
               }
               {
                 post.discount?<Text style={{position: 'absolute', bottom: 40, right: 0, backgroundColor: colors.primary, paddingHorizontal: 20, paddingVertical: 5, fontSize: 15, color: "white", fontWeight: "bold"}}>Discount: {post.discount.amount}</Text>:null
@@ -53,6 +51,10 @@ export default function PostImage({post}) {
 }
 
 const Styles = StyleSheet.create({
+  postVid: {
+    height: Dimensions.get('screen').height / 3,
+    width: Dimensions.get('screen').width,
+  },
   postImg: {
     height: Dimensions.get('screen').height / 3,
     width: Dimensions.get('screen').width,

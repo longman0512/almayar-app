@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Image, Text, Dimensions} from 'react-native';
+import {View, Image, Text, Dimensions, StyleSheet} from 'react-native';
 import colors from 'res/colors';
 import images from 'res/images';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -68,7 +68,7 @@ export default function FollowingItem({data}) {
           marginTop: 15,
           width: windowWidth-30
         }}>
-        <TouchableOpacity style={{flexDirection: 'row', width: windowWidth-100}} onPress={goPublicProfile} >
+        <TouchableOpacity style={{flexDirection: 'row', width: windowWidth-150}} onPress={goPublicProfile} >
           <Image
             source={data.u_avatar?{uri: data.u_avatar}:images.avatar}
             style={{width: 60, height: 60, borderRadius: 70}}
@@ -82,12 +82,33 @@ export default function FollowingItem({data}) {
             </View>
           </View>
         </TouchableOpacity>
+        <View style={{flexDirection: 'row', alignItems: "center"}}>
+        <TouchableOpacity onPress={() => {navigation.navigate('MessageScreen')}}>
+          <Image source={images.direct_message} style={Styles.actionIcons} />
+        </TouchableOpacity>
         <TouchableOpacity style={{flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
           <Button mode="contained" color={colors.primary} onPress={remove} labelStyle={{color: "white", fontSize: 10}}>
             Remove
           </Button>
         </TouchableOpacity>
+        </View>
+        
       </View>
     </View>
   );
 }
+
+const Styles = StyleSheet.create({
+  container: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    //paddingStart: 20,
+    marginEnd: 15,
+    marginTop: 15,
+  },
+  actionIcons: {
+    width: 23,
+    height: 23,
+    marginEnd: 15,
+  },
+});
