@@ -10,8 +10,8 @@ function CustomNavigationBar({ navigation, previous }) {
     const route = useRoute();
     return (
         <Appbar.Header style={{backgroundColor: "white"}}>
-            {previous&&route.name!='Profile'? <Appbar.BackAction onPress={navigation.goBack} style={{color: colors.primary}} /> : null}
-            <Appbar.Content title={route.name=="EditProfile"?"Edit Profile":route.name} />
+            {previous&&route.name!='Profile'? <Appbar.BackAction onPress={navigation.goBack} color= {colors.primary} /> : null}
+            <Appbar.Content title={route.name=="EditProfile"?"Edit Profile":route.name} color={colors.primary} />
             {route.name=='Profile' ? (
             <Menu
                 visible={visible}

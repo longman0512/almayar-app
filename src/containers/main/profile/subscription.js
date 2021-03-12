@@ -7,7 +7,7 @@ import { Appbar, Menu, Portal, Card, Title, Dialog, Button, Divider } from 'reac
 const data = [{key: '1'}];
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-import { upgradeMembership } from "../../../utils/API"
+import { upgradeMembership, getProfileInfo } from "../../../utils/API"
 import Loading from "../../../components/Loading"
 import {SCLAlert, SCLAlertButton} from 'react-native-scl-alert';
 import StoreContext from "../../../context/index";
@@ -50,8 +50,15 @@ export default function subscription() {
      console.log(token)
      
      upgradeMembership(token.id, payAmount, store.userInfo).then(res=>{
-       console.log(res)
+       console.log(res, "in function")
        setLoading(false)
+       getProfileInfo(store.userInfo).then(res=>{
+        setStore({
+          ...store,
+          userProfile: res.data,
+        })
+        setLoading(false)
+      })
        if(res.status){
         showAlert('success', res.msg)
        } else {
@@ -81,6 +88,24 @@ export default function subscription() {
   return (
     <View style={{width: windowWidth, height: windowHeight, justifyContent: "center", alignItems: "center"}}>
       <Loading loading={loading}/>
+      <SCLAlert
+        theme={alertType}
+        show={alertFlag}
+        title="Al Mayar"
+        titleContainerStyle={{height: 0}}
+        subtitle={alertMsg}
+        onRequestClose={() => {
+          console.log('closed');
+        }}
+        subtitleStyle={{fontSize: 17}}>
+        <SCLAlertButton
+          theme={alertType}
+          onPress={() => {
+            setAlertFlag(false);
+          }}>
+          OK
+        </SCLAlertButton>
+      </SCLAlert>
       <Portal>
         <Dialog
           visible={modal}

@@ -17,6 +17,7 @@ export default function addPostNavigator() {
             backgroundColor: colors.bottomBackGround,
             shadowColor: colors.seperatorLineColor,
           },
+          headerTintColor: colors.primary
         }}
       />
     </Stack.Navigator>

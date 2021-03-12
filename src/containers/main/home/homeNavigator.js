@@ -74,9 +74,29 @@ export default function () {
           headerTitleStyle: {alignSelf: 'center'},
         })}
       />
-      <Stack.Screen name="Story" component={StoryScreen} />
-      <Stack.Screen name="UserProfile" component={publicProfileScreen} />
-      <Stack.Screen name="ProductDetail" component={productDetailscreen} />
+      <Stack.Screen
+        name="Story"
+        component={StoryScreen}
+        options={{
+          headerTitleStyle: {
+            color: colors.primary
+          }
+        }}
+      />
+      <Stack.Screen
+        name="UserProfile"
+        component={publicProfileScreen}
+        options={{
+          headerTintColor: colors.primary
+        }}
+      />
+      <Stack.Screen
+        name="ProductDetail"
+        component={productDetailscreen} 
+        options={{
+          headerTintColor: colors.primary
+        }}
+      />
       <Stack.Screen
         name="StoryCamera"
         component={StoryCamera}

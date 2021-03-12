@@ -222,3 +222,39 @@ export async function upgradeMembership(tokenId, month, u_id) {
 
   return DATA
 }
+
+export async function getFollowers(u_id) {
+  var data = new FormData();
+  data.append('api_key', ' admin@1474?');
+  data.append('u_id', u_id);
+  
+  const DATA = await Axios.post(
+    "getFollowers",
+    data)
+  .then(res => {
+    return res.data
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+  return DATA
+}
+
+export async function getFollowings(u_id) {
+  var data = new FormData();
+  data.append('api_key', ' admin@1474?');
+  data.append('u_id', u_id);
+  
+  const DATA = await Axios.post(
+    "getFollowings",
+    data)
+  .then(res => {
+    return res.data
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+  return DATA
+}
