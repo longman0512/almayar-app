@@ -21,6 +21,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { ListItem, Avatar } from 'react-native-elements'
 import moment from 'moment';
 import StoreContext from "../../../../context/index";
+import { setSocket, emitEvent, onMessageReceived, offEvent } from '../../../../utils/socket'
+import stringify from '../../../../utils/stringify'
+import parse from '../../../../utils/parse'
+import { ActivityIndicator } from 'react-native-paper';
 
 LogBox.ignoreLogs(['Warning: ...']);
 const windowWidth = Dimensions.get('window').width;
@@ -28,35 +32,79 @@ const windowHeight = Dimensions.get('window').height;
 
 export default function MessageScreen() {
   const [emojiShow, setEmojiShow] = React.useState(false);
+  const [sending, setSending] = React.useState(false);
   const [message, setMessage] = React.useState("");
   const [messageData, setMessageData] = React.useState("");
   const { store, setStore } = React.useContext(StoreContext)
-  const scrollViewRef = React.createRef();
+  var scrollViewRef = React.useRef();
 
   React.useEffect(()=>{
     console.log(scrollViewRef)
-    // scrollViewRef?.scrollToEnd({ animated: true, duration: 500 });
+    // scrollViewRef?.scrollToEnd({ animated: true });
+offEvent("newMessage")
+offEvent("newUpdated")
+    onMessageReceived("newMessage", receiveMessage)
+    onMessageReceived("newUpdated", newUpdated)
+setTimeout(()=>{
+	emitEvent("readMsg", {
+      from_id: store.userInfo,
+      to_id: store.messages.clientInfo.u_id
+   })
+}, 5000)
+    
   }, [])
+
+ React.useEffect(()=>{
+return ()=>{
+offEvent("newMessage")
+offEvent("newUpdated")
+}
+    
+  }, [])
+
+
   const onClick = emoji => {
     console.log(emoji);
     setMessage(message+emoji.code)
     setEmojiShow(!emojiShow)
   };
 
-  const readMsg = ()=>{
-    var temp = messageData
-    messageData.map((item, index)=>{
-      if(item.userId == myId){
-        if(!item.read) temp[index].read = true
-      }
-    })
-    setMessageData(temp)
-    console.log(messageData)
+  const receiveMessage = (data) => {
+    if(data.client_id == store.messages.clientInfo.u_id){
+      console.log(data, store.messages, "messageData")
+      setStore({
+        ...store,
+        messages: {
+          ...store.messages,
+          message: data.message
+        }
+      })
+setTimeout(()=>{
+	emitEvent("readMsg", {
+      from_id: store.userInfo,
+      to_id: store.messages.clientInfo.u_id
+   })
+
+}, 5000)
+setSending(false)
+    }
+
+    console.log(data)
   }
 
-  const listData = (d)=>{
-    console.log(d)
-    return d
+  const newUpdated = (data) => {
+    if(data.client_id == store.messages.clientInfo.u_id){
+      console.log(data, store.messages, "messageData")
+      setStore({
+        ...store,
+        messages: {
+          ...store.messages,
+          message: data.message
+        }
+      })
+    }
+
+    console.log(data)
   }
 
   const calculateTime = (created_time)=>{
@@ -73,43 +121,24 @@ export default function MessageScreen() {
     return (hours <= 9 ? "0" : "") + hours + " h " + (minutes <= 9 ? "0" : "") + minutes + " min ago";
   }
 
+  const sendMessage = ()=>{
+    setSending(true)
+    emitEvent("sendMsg", {
+      from_id: store.userInfo,
+      to_id: store.messages.clientInfo.u_id,
+      message: stringify(message)
+    })
+  }
+
   return (
     <View style={{ flex: 1}}>
-      {/* <View style={{height: windowHeight-70}}>
-      {
-      store.messageList?.map((item, i) => (
-        <ListItem key={i} bottomDivider onPress={()=>{goDirectMessage(item)}}>
-          <LinearGradient
-            colors={[colors.primary, colors.secondary, colors.primary]}
-            start={{x: 0.0, y: 1.0}}
-            end={{x: 1.0, y: 1.0}}
-            style={{borderRadius: 100, padding: 2}}>
-            <View style={{borderWidth: 2, borderColor: "white", borderRadius: 100}}>
-              <Image
-                source={item.avatar?{uri: item.avatar}:images.avatar}
-                style={{width: 55, height: 55, borderRadius: 70}}
-              />
-            </View>
-            {
-              item.unread?<Badge size={20} style={{alignSelf: "center", position: 'absolute', right: 0, top: 3}}>{item.unread}</Badge>:null
-            }
-          </LinearGradient>
-          <ListItem.Content>
-            <ListItem.Title>{item.userName}</ListItem.Title>
-            <ListItem.Subtitle style={{height: 40}}>{item.message.length?item.message[0].message:null}</ListItem.Subtitle>
-          </ListItem.Content>
-          <ListItem.Subtitle></ListItem.Subtitle>
-        </ListItem>
-      ))
-    }
-    </View> */}
     <ScrollView
       ref={scrollViewRef}
-      onContentSizeChange={(contentWidth, contentHeight)=> {scrollViewRef.current.scrollToEnd({animated: true})}}
+      onContentSizeChange={(contentWidth, contentHeight)=> {scrollViewRef?.current?.scrollToEnd({animated: true, duration: 500})}}
     >
       {
         store.messages?.message.map((item, index)=>{
-        return <TouchableOpacity key={index} style={item.from_id==store.userInfo?Styles.userMessage:Styles.otherMessage} onPress={()=>{readMsg()}} activeOpacity={1} >
+        return <View key={index} style={item.from_id==store.userInfo?Styles.userMessage:Styles.otherMessage} activeOpacity={1} >
             <View style={{padding: 15, flexDirection: "row"}}>
               <View>
                 {
@@ -121,7 +150,7 @@ export default function MessageScreen() {
               </View>
               <View style={item.from_id==store.userInfo?Styles.userMessageBox:Styles.otherMessageBox}>
                 <View style={{flexDirection: "row"}}>
-                  <Text numberOfLines={100} style={{marginBottom: 10, color: "black", fontSize: 18, color: "white"}}>{item.message}</Text>
+                  <Text numberOfLines={100} style={{marginBottom: 10, color: "black", fontSize: 18, color: "white"}}>{parse(item.message)}</Text>
                 </View>
                 <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
                   <View>
@@ -137,7 +166,7 @@ export default function MessageScreen() {
                 </View>
               </View>
             </View>
-          </TouchableOpacity>
+          </View>
         })
       }
       
@@ -158,11 +187,16 @@ export default function MessageScreen() {
             onChangeText = {(txt)=>{console.log(txt); setMessage(txt)}}
             value = {message}
           />
-          <TouchableOpacity>
-            <Image
+          <TouchableOpacity
+            onPress={sendMessage}
+          >
+            {
+              sending?<ActivityIndicator animating={true} color="#e59c11" style={{backgroundColor: "white"}}/>:<Image
               source={images.send_message}
               style={{width: 25, height: 25, marginHorizontal: 5}}
             />
+            }
+            
           </TouchableOpacity>
         </View>
       </View>

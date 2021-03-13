@@ -17,7 +17,7 @@ import StoreContext from '../../context/index'
 export default function MainNavigator({navigation}) {
   const Stack = createStackNavigator();
   const { store, setStore } = React.useContext(StoreContext)
-
+  
   const NavigateToStoryCamera = () => navigation.navigate('StoryCamera');
   return (
     <Stack.Navigator>

@@ -14,6 +14,7 @@ import Loading from "../../../../components/Loading";
 import { getPrivateMessage } from "../../../../utils/API"
 import colors from "res/colors";
 import { useNavigation } from '@react-navigation/native';
+import parse from '../../../../utils/parse'
 
 export default function MessagesList() {
   const  { store, setStore } = React.useContext(StoreContext);
@@ -72,7 +73,7 @@ export default function MessagesList() {
           </LinearGradient>
           <ListItem.Content>
             <ListItem.Title>{item.userName}</ListItem.Title>
-            <ListItem.Subtitle style={{height: 40}}>{item.message.length?item.message[0].message:null}</ListItem.Subtitle>
+            <ListItem.Subtitle style={{height: 40}}>{item.message.length?parse(item.message[0].message):null}</ListItem.Subtitle>
           </ListItem.Content>
           <ListItem.Subtitle>{item.message.length?calculateTime(item.message[0].created_at):null}</ListItem.Subtitle>
         </ListItem>

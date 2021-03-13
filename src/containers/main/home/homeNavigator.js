@@ -23,13 +23,23 @@ import Loading from "../../../components/Loading";
 import { getMessageApi } from "../../../utils/API";
 import { StackRouter } from '@react-navigation/routers';
 import { useNavigation } from '@react-navigation/native';
+import { setSocket, onMessageReceived, emitEvent } from '../../../utils/socket'
 
 export default function () {
   const  { store, setStore } = useContext(StoreContext);
   const Stack = createStackNavigator();
   StatusBar.setBarStyle('light-content');
   const navigation = useNavigation();
+  React.useEffect(()=>{
+    setSocket()
 
+    onMessageReceived("newMessage", receivewMessage)
+    emitEvent("newUser", store.userInfo)
+  }, [])
+
+  const receivewMessage = (data)=>{
+    console.log(data)
+  }
   const getMessages = () => {
     setStore({
       ...store,
