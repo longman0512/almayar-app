@@ -4,9 +4,9 @@ import images from 'res/images';
 import { useNavigation } from '@react-navigation/native';
 import colors from '../../../../res/colors';
 import StoreContext from "../../../../context/index";
-import { Overlay } from 'react-native-elements'
 import { ActivityIndicator } from 'react-native-paper';
 import { toggleLike } from '../../../../utils/API';
+import Loading from "../../../../components/Loading"
 
 function tapToFavorite(favoriteIcon) {
   if (favoriteIcon % 2 === 0) {
@@ -63,9 +63,7 @@ export default function PostActions({post}) {
   }
   return (
     <View style={Styles.container}>
-      <Overlay isVisible={loading}>
-        <ActivityIndicator animating={true} />
-      </Overlay>
+      <Loading loading={loading}/>
       <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
         {/* <TouchableOpacity onPress={() => setFavoriteIcon(favoriteIcon + 1)}>
           <Image source={tapToFavorite(favoriteIcon)} style={Styles.actionIcons} />

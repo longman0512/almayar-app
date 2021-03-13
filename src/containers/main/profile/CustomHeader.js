@@ -21,10 +21,10 @@ function CustomNavigationBar({ navigation, previous }) {
                 }>
                 <Menu.Item onPress={() => {closeMenu(); navigation.navigate("EditProfile", { title: 'Edit Profile' })}} title="Edit Profile" />
                 <Menu.Item onPress={() => {closeMenu(); navigation.navigate("Subscription")}} title="Subscription" />
-                {/* <Menu.Item onPress={() => {closeMenu(); navigation.navigate("UserSetting")}} title="Settings" /> */}
+                <Menu.Item onPress={() => {closeMenu(); navigation.navigate("UserSetting")}} title="Settings" />
                 <Divider/>
                 <Menu.Item onPress={() => {
-                    closeMenu(); 
+                    closeMenu();
                     navigation.navigate('Login'); 
                 }} title="Sign Out" />
             </Menu>

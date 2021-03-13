@@ -83,14 +83,14 @@ export default function FollowingItem({data}) {
           </View>
         </TouchableOpacity>
         <View style={{flexDirection: 'row', alignItems: "center"}}>
-        <TouchableOpacity onPress={() => {navigation.navigate('MessageScreen')}}>
-          <Image source={images.direct_message} style={Styles.actionIcons} />
-        </TouchableOpacity>
-        <TouchableOpacity style={{flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-          <Button mode="contained" color={colors.primary} onPress={remove} labelStyle={{color: "white", fontSize: 10}}>
-            Remove
-          </Button>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => {navigation.navigate('MessageScreen')}}>
+            <Image source={images.direct_message} style={Styles.actionIcons} />
+          </TouchableOpacity>
+          <TouchableOpacity style={{flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+            <Button mode="contained" color={colors.primary} onPress={remove} labelStyle={{color: "white", fontSize: 10}}>
+              Remove
+            </Button>
+          </TouchableOpacity>
         </View>
         
       </View>

@@ -1,12 +1,18 @@
 import React from 'react';
 import {View, Dimensions, TextInput, Text} from 'react-native';
 import colors from 'res/colors';
+import searchNavigator from '../../search/searchNavigator';
 
 export default function DirectMessageSearch() {
+
+  const searchUsers = (txt)=>{
+    console.log(txt)
+  }
+  
   return (
     <View>
       <TextInput
-        placeholder="Search"
+        placeholder="Search All Users"
         placeholderTextColor={colors.textFaded2}
         style={{
           backgroundColor: "white",
@@ -21,6 +27,7 @@ export default function DirectMessageSearch() {
           borderColor: colors.secondary,
           borderWidth: 1
         }}
+        onChangeText={(txt)=>{searchUsers(txt)}}
       />
     </View>
   );

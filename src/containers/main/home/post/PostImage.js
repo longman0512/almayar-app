@@ -3,10 +3,10 @@ import {Image, TouchableOpacity, StyleSheet, Dimensions, View, Text} from 'react
 import colors from '../../../../res/colors';
 import { useNavigation } from '@react-navigation/native';
 import StoreContext from "../../../../context/index";
-import { Overlay } from 'react-native-elements'
 import { ActivityIndicator } from 'react-native-paper';
 import { getProDetail } from '../../../../utils/API';
 import Video from 'react-native-video';
+import Loading from "../../../../components/Loading"
 
 export default function PostImage({post}) {
   const navigation = useNavigation();
@@ -30,9 +30,7 @@ export default function PostImage({post}) {
   var videoBuffer = ''
   console.log(post)
   return  <>
-            <Overlay isVisible={loading}>
-              <ActivityIndicator animating={true} />
-            </Overlay>
+            <Loading loading={loading}/>
             <TouchableOpacity onPress={()=>{viewProductDetail(post.key)}}>
               
               {

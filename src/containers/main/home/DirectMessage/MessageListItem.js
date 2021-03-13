@@ -21,7 +21,7 @@ export default function MessageListItem({data, nav}) {
           marginTop: 15,
         }}>
         <View style={{flexDirection: 'row'}}>
-          {
+            {
               data.avatar==''?<Text style={{width: 60, height: 60, borderRadius: 70, textAlignVertical:"center", textAlign: "center", fontSize: 30, color: "white", backgroundColor: colors.primary}}>{data?.name[0]?.toUpperCase() +data?.name[1]?.toUpperCase()}</Text>:<Image
               source={data.avatar?data.avatar:images.avatar}
               style={{width: 60, height: 60, borderRadius: 70}}

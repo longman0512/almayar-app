@@ -115,7 +115,7 @@ const Styles = StyleSheet.create({
     fontSize: 40
   },
   numberContainer: {
-    color: 'black',
+    color: colors.secondary,
     fontWeight: 'bold',
     alignSelf: 'center',
     fontSize: 15,
@@ -127,7 +127,7 @@ const Styles = StyleSheet.create({
     marginEnd: 20,
   },
   text: {
-    color: 'black',
+    color: colors.primary,
     //fontWeight: 'bold',
     alignSelf: 'center',
   },

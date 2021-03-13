@@ -80,7 +80,7 @@ export default function homeScreen({navigation}) {
 
   return (
     <SafeAreaView style={{backgroundColor: colors.background}}>
-      <Loading loading={loading}/>
+      <Loading loading={loading || store.loading?true:false}/>
       <ScrollView
         onScrollBeginDrag={()=>{
           console.log("Drag start")

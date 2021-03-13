@@ -1,7 +1,6 @@
 import React from 'react';
 import {View, Image, Text, StyleSheet, Dimensions} from 'react-native';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
-import { Overlay } from 'react-native-elements'
 import { ActivityIndicator } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import Video from 'react-native-video';
@@ -9,6 +8,7 @@ import { FlatGrid } from "react-native-super-grid";
 import colors from '../../../../res/colors';
 import images from '../../../../res/images';
 import StoreContext from "../../../../context/index";
+import Loading from "../../../../components/Loading"
 
 const windowWidth = Dimensions.get('screen').width;
 
@@ -30,9 +30,7 @@ export default function ProfileGrid() {
   var videoError = ''
   return (
     <>
-    <Overlay isVisible={loading}>
-      <ActivityIndicator animating={true} />
-    </Overlay>
+    <Loading loading={loading}/>
     <FlatGrid
         itemDimension={windowWidth / 3 - 5}
         style={{backgroundColor: 'white'}}

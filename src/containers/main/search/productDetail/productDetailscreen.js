@@ -6,9 +6,9 @@ import colors from '../../../../res/colors';
 import images from '../../../../res/images';
 import StoreContext from "../../../../context/index";
 import { toggleLike } from '../../../../utils/API';
-import { Overlay } from 'react-native-elements'
 import { ActivityIndicator } from 'react-native-paper';
 import Video from 'react-native-video';
+import Loading from "../../../../components/Loading"
 
 const data = [{key: '1'}];
 const post = {
@@ -89,9 +89,7 @@ export default function productDetailscreen() {
   var videoError = ''
   return (
     <>
-    <Overlay isVisible={loading}>
-        <ActivityIndicator animating={true} />
-      </Overlay>
+    <Loading loading={loading}/>
     <FlatList
       style={{flex: 1, backgroundColor: colors.bottomBackGround}}
       data={data}

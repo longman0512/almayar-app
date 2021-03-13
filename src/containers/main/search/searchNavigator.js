@@ -40,6 +40,7 @@ export default function searchNavigator() {
         component={searchScreen}
         options={{
           title: '',
+          headerTintColor: colors.primary,
           headerStyle: {
             backgroundColor: colors.bottomBackGround,
             shadowColor: 'transparent',
@@ -70,7 +71,12 @@ export default function searchNavigator() {
           ),
         }}
       />
-      <Stack.Screen name="ProductDetail In Search" component={productDetailscreen} />
+      <Stack.Screen
+        name="ProductDetail In Search"
+        component={productDetailscreen} 
+        options={{
+          headerTintColor: colors.primary
+        }} />
     </Stack.Navigator>
   );
 }
