@@ -23,7 +23,9 @@ export default function ProfileGrid() {
       ...store,
       ProductDetail: item
     })
-    setLoading(false)
+    setTimeout(()=>{
+          setLoading(false)
+        }, 300)
     navigation.navigate('ProductDetail')
   }
   var videoBuffer = ''

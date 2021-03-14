@@ -20,7 +20,9 @@ export default function PostImage({post}) {
       ...store,
       ProductDetail: post
     })
-    setLoading(false)
+    setTimeout(()=>{
+          setLoading(false)
+        }, 300)
     navigation.navigate('ProductDetail')
 
     // getProDetail(pro_id).then(res=>{

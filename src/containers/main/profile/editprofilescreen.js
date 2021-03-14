@@ -61,9 +61,13 @@ export default function profileScreen() {
       } else {
         showAlert("warning", "Edit Failed")
       }
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
     }).catch(error=>{
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
     })
   }
 

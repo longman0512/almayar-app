@@ -32,11 +32,15 @@ export default function () {
   const navigation = useNavigation();
   React.useEffect(()=>{
     setSocket()
-
-    onMessageReceived("newMessage", receivewMessage)
     emitEvent("newUser", store.userInfo)
+    onMessageReceived("newUpdated", newUpdated)
   }, [])
-
+  const newUpdated = (data)=> {
+    setStore({
+      ...store,
+      newMsg: data.newMsg
+    })
+  }
   const receivewMessage = (data)=>{
     console.log(data)
   }

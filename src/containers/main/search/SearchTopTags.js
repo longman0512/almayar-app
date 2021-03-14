@@ -47,7 +47,9 @@ export default function SearchTopTags({catData}) {
         searchedProducts: res.data,
         filteredProducts: res.data
       })
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
     })
   }, [selectedCategory])
   

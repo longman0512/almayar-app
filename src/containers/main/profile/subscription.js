@@ -51,13 +51,17 @@ export default function subscription() {
      
      upgradeMembership(token.id, payAmount, store.userInfo).then(res=>{
        console.log(res, "in function")
-       setLoading(false)
+       setTimeout(()=>{
+          setLoading(false)
+        }, 300)
        getProfileInfo(store.userInfo).then(res=>{
         setStore({
           ...store,
           userProfile: res.data,
         })
-        setLoading(false)
+        setTimeout(()=>{
+          setLoading(false)
+        }, 300)
       })
        if(res.status){
         showAlert('success', res.msg)

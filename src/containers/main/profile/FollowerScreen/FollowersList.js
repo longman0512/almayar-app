@@ -18,7 +18,7 @@ export default function FollowersList({listData}) {
   }, [])
   
   const dataFilter = (txt) => {
-    console.log(txt);
+    console.log("reset data");
     var temp = [];
     store.followers.map((f, index)=>{
       console.log(f.u_name)
@@ -34,6 +34,9 @@ export default function FollowersList({listData}) {
     }
   }
 
+  const resetData = (newData)=> {
+    setFiltered(newData)
+  }
   return (
   <>
     <View>
@@ -58,8 +61,9 @@ export default function FollowersList({listData}) {
     </View>
     <FlatList
       data={filtered}
-      renderItem={({item, index}) => <FollowerItem data={item} />}
+      renderItem={({item, index}) => <FollowerItem data={item} resetData={resetData} />}
     />
   </>
   );
 }
+

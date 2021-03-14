@@ -6,20 +6,22 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
-
-import { toggleFollow, getProfileInfo } from "../../../../utils/API"
+import { ListItem } from 'react-native-elements'
+import { toggleFollow, getProfileInfo, getPrivateMessage } from "../../../../utils/API"
 import StoreContext from "../../../../context/index";
 import Loading from "../../../../components/Loading"
+import LinearGradient from 'react-native-linear-gradient';
+
 const windowWidth = Dimensions.get('window').width;
 
-export default function FollowerItem({data}) {
+export default function FollowerItem({data, resetData}) {
   const navigation = useNavigation();
   const  { store, setStore } = React.useContext(StoreContext);
   const [loading, setLoading] = React.useState(false);
 
-  const remove = () => {
+  const remove = async () => {
     setLoading(true)
-    toggleFollow(
+    await toggleFollow(
       {
         u_id: store.userInfo,
         follower_id: data.u_id,
@@ -38,62 +40,82 @@ export default function FollowerItem({data}) {
             userProfile: res.data,
             followers: followers
           })
-          setLoading(false)
+          setTimeout(()=>{
+            setLoading(false)
+            resetData(followers)
+          }, 300)
         })
       })
   }
 
   const goPublicProfile = () => {
+    console.log("data")
     setLoading(true)
     getProfileInfo(data.u_id).then(res=>{
       setStore({
         ...store,
         publicUserInfo: res.data
       })
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
       navigation.navigate('Public Profile')
     })
   }
 
+  const goDirectMessage = ()=>{
+    if(store.userInfo == data.u_id) return false
+    setLoading(true)
+    getPrivateMessage(store.userInfo, data.u_id).then((res)=>{
+      console.log(res.data)
+      setStore({
+        ...store,
+        messages: res.data
+      })
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
+      navigation.navigate("MessageScreen")
+    }).catch((err)=>{
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
+    })
+  }
+
   return (
-    <View>
+    <ListItem key={data.u_id} bottomDivider>
       <Loading loading={loading}/>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: "center",
-          marginStart: 10,
-          marginEnd: 10,
-          marginTop: 15,
-          width: windowWidth-30
-        }}>
-        <TouchableOpacity style={{flexDirection: 'row', width: windowWidth-150}} onPress={goPublicProfile} >
-          <Image
-            source={data.u_avatar?{uri: data.u_avatar}:images.avatar}
-            style={{width: 60, height: 60, borderRadius: 70}}
-          />
-          <View style={{flexDirection: 'column', marginStart: 15}}>
-            <Text style={{color: "black", fontWeight: 'bold'}}>
-              {data.u_name}
-            </Text>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={{color: colors.textFaded2}}>{data.u_city}</Text>
-            </View>
-          </View>
+    <LinearGradient
+      colors={[colors.primary, colors.secondary, colors.primary]}
+      start={{x: 0.0, y: 1.0}}
+      end={{x: 1.0, y: 1.0}}
+      style={{borderRadius: 100, padding: 2}}
+    >
+      <TouchableOpacity style={{borderWidth: 2, borderColor: "white", borderRadius: 100}} onPress={goPublicProfile}>
+        <Image
+          source={data.u_avatar?{uri: data.u_avatar}:images.avatar}
+          style={{width: 55, height: 55, borderRadius: 70}}
+        />
+      </TouchableOpacity>
+    </LinearGradient>
+    <ListItem.Content onPress={goPublicProfile}>
+      <ListItem.Title>{data.u_name}</ListItem.Title>
+      <ListItem.Subtitle style={{height: 40}}>{data.u_city}</ListItem.Subtitle>
+    </ListItem.Content>
+    <ListItem.Subtitle>
+      <View style={{flexDirection: "row", alignItems: 'center'}}>
+        <TouchableOpacity onPress={() => {goDirectMessage()}}>
+          <Image source={images.direct_message} style={Styles.actionIcons} />
         </TouchableOpacity>
-        <View style={{flexDirection: "row", alignItems: 'center'}}>
-          <TouchableOpacity onPress={() => {navigation.navigate('MessageScreen')}}>
-            <Image source={images.direct_message} style={Styles.actionIcons} />
-          </TouchableOpacity>
-          <TouchableOpacity style={{flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-          <Button mode="contained" color={colors.primary} onPress={remove} labelStyle={{color: "white", fontSize: 10}}>
-            Remove
-          </Button>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={{flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+        <Button mode="contained" color={colors.primary} onPress={remove} labelStyle={{color: "white", fontSize: 10}}>
+          Remove
+        </Button>
+        </TouchableOpacity>
       </View>
-    </View>
+    </ListItem.Subtitle>
+    </ListItem>
   );
 }
 

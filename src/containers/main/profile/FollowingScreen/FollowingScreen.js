@@ -13,22 +13,8 @@ export default function FollowingScreen({navigation}) {
   const [value, setValue] = React.useState('followers');
 
   return (
-
     <SafeAreaView style={{backgroundColor: colors.background}}>
-      {/* <Loading loading={loading}/> */}
-      <ScrollView
-        onScrollBeginDrag={()=>{
-          console.log("Drag start")
-        }}
-        onScroll={()=>{
-          console.log("on scroll")
-        }}
-        scrollEventThrottle={400}
-      >
-         <>
-            <FollowingList navigation = {navigation}/>
-         </>
-      </ScrollView>
+      <FollowingList navigation = {navigation}/>
     </SafeAreaView>
   );
 }

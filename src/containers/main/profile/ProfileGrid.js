@@ -23,7 +23,9 @@ export default function ProfileGrid() {
       ...store,
       ProductDetail: item
     })
-    setLoading(false)
+    setTimeout(()=>{
+          setLoading(false)
+        }, 300)
     navigation.navigate('UserProductDetail')
   }
   var videoBuffer = ''
@@ -34,11 +36,11 @@ export default function ProfileGrid() {
     <FlatGrid
       itemDimension={windowWidth / 3 - 5}
       style={{backgroundColor: 'white'}}
-      data={store.userProfile?.products}
+      data={store.userProfile?.products?store.userProfile?.products:[]}
       spacing={3}
-      keyExtractor={()=>{Math.random().toString()}}
+      keyExtractor={()=>{return Math.random().toString()}}
       renderItem={({ item }) => (
-        <View style={{position: "relative"}}>
+        <View style={{position: "relative"}} key={()=>{return Math.random().toString()}}>
           <TouchableOpacity
             onPress={()=>{viewProductDetail(item)}}
           >

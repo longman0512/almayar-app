@@ -28,7 +28,9 @@ export default function profileScreen() {
         ...store,
         userProfile: res.data
       })
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
     })
     
   }, [])

@@ -31,6 +31,9 @@ export default function FollowingList() {
       setFiltered(temp)
     }
   }
+  const resetData = (newData)=> {
+    setFiltered(newData)
+  }
   return (
     <>
       <View>
@@ -55,7 +58,7 @@ export default function FollowingList() {
       </View>
       <FlatList
         data={filtered}
-        renderItem={({item, index}) => <FollowingItem data={item} />}
+        renderItem={({item, index}) => <FollowingItem data={item} resetData={resetData}/>}
       />
     </>
   );

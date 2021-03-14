@@ -30,10 +30,14 @@ export default function MessagesList() {
         ...store,
         messages: res.data
       })
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
       navigation.navigate("MessageScreen")
     }).catch((err)=>{
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
     })
   }
 

@@ -25,7 +25,9 @@ export default function ProfileHeader() {
           ...store,
           followers: res.data
         })
-        setLoading(false)
+        setTimeout(()=>{
+          setLoading(false)
+        }, 300)
         navigation.navigate('Followers')
       })
     }
@@ -42,7 +44,9 @@ export default function ProfileHeader() {
           ...store,
           followers: res.data
         })
-        setLoading(false)
+        setTimeout(()=>{
+          setLoading(false)
+        }, 300)
         navigation.navigate('Followings')
       })
     }

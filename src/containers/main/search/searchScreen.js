@@ -39,7 +39,9 @@ export default function searchScreen() {
             searchedProducts: res.data,
             filteredProducts: res.data
           })
+          setTimeout(()=>{
           setLoading(false)
+        }, 300)
         })
       }
     })

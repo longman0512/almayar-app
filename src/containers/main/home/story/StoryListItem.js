@@ -24,7 +24,9 @@ export default function StoryListItem({item, storyOnPress}) {
     //   })
     // }
     getProfileInfo(user).then(res=>{
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
       if(res.status){
         setStore({
           ...store,

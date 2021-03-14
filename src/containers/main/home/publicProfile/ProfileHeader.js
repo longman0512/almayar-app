@@ -15,7 +15,7 @@ export default function ProfileHeader() {
   const [following, setFollowing] = React.useState(false)
   const [loading, setLoading] = React.useState(false);
 
-  React.  useEffect(()=>{
+  React.useEffect(()=>{
     console.log(store.userInfo)
     var flag = false
     store.publicUserInfo.followers.map((follower, index)=>{
@@ -48,7 +48,9 @@ export default function ProfileHeader() {
         })
         if(flag)setFollowing(true)
         else setFollowing(false)
-        setLoading(false)
+        setTimeout(()=>{
+          setLoading(false)
+        }, 300)
         getProfileInfo(store.userInfo).then(res=>{
           setStore({
             ...store,

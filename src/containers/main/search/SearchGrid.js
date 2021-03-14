@@ -70,7 +70,9 @@ export default function SearchGrid() {
       ...store,
       ProductDetail: item
     })
-    setLoading(false)
+    setTimeout(()=>{
+          setLoading(false)
+        }, 300)
     navigation.navigate('ProductDetail In Search')
   }
 

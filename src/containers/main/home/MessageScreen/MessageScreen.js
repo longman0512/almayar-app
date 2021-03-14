@@ -41,26 +41,24 @@ export default function MessageScreen() {
   React.useEffect(()=>{
     console.log(scrollViewRef)
     // scrollViewRef?.scrollToEnd({ animated: true });
-offEvent("newMessage")
-offEvent("newUpdated")
+    offEvent("newMessage")
+    offEvent("newUpdated")
     onMessageReceived("newMessage", receiveMessage)
     onMessageReceived("newUpdated", newUpdated)
-setTimeout(()=>{
-	emitEvent("readMsg", {
-      from_id: store.userInfo,
-      to_id: store.messages.clientInfo.u_id
-   })
-}, 5000)
-    
+    setTimeout(()=>{
+      emitEvent("readMsg", {
+          from_id: store.userInfo,
+          to_id: store.messages.clientInfo.u_id
+      })
+    }, 5000)
+        
   }, [])
 
  React.useEffect(()=>{
-return ()=>{
-offEvent("newMessage")
-offEvent("newUpdated")
-}
-    
-  }, [])
+  return ()=>{
+    offEvent("newMessage")
+    offEvent("newUpdated")
+  }}, [])
 
 
   const onClick = emoji => {
@@ -71,40 +69,36 @@ offEvent("newUpdated")
 
   const receiveMessage = (data) => {
     if(data.client_id == store.messages.clientInfo.u_id){
-      console.log(data, store.messages, "messageData")
       setStore({
         ...store,
         messages: {
           ...store.messages,
           message: data.message
-        }
+        },
+        newMsg: data.newMsg
       })
-setTimeout(()=>{
-	emitEvent("readMsg", {
-      from_id: store.userInfo,
-      to_id: store.messages.clientInfo.u_id
-   })
+      setTimeout(()=>{
+        emitEvent("readMsg", {
+            from_id: store.userInfo,
+            to_id: store.messages.clientInfo.u_id
+        })
 
-}, 5000)
-setSending(false)
+      }, 5000)
     }
-
-    console.log(data)
+    setSending(false)
   }
 
   const newUpdated = (data) => {
     if(data.client_id == store.messages.clientInfo.u_id){
-      console.log(data, store.messages, "messageData")
       setStore({
         ...store,
         messages: {
           ...store.messages,
           message: data.message
-        }
+        },
+        newMsg: data.newMsg
       })
     }
-
-    console.log(data)
   }
 
   const calculateTime = (created_time)=>{

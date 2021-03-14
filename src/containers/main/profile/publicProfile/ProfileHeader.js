@@ -7,7 +7,7 @@ import images from '../../../../res/images';
 import StoreContext from "../../../../context/index";
 import { Card, Button, Dialog, Portal } from 'react-native-paper';
 import symbolicateStackTrace from 'react-native/Libraries/Core/Devtools/symbolicateStackTrace';
-import { toggleFollow } from '../../../../utils/API';
+import { toggleFollow, getProfileInfo } from '../../../../utils/API';
 import Loading from "../../../../components/Loading"
 
 export default function ProfileHeader() {
@@ -27,6 +27,31 @@ export default function ProfileHeader() {
         else setFollowing(false)
   }, [])
 
+  // const followToggleAction = (flag) => {
+  //   setLoading(true)
+  //   toggleFollow(
+  //     {
+  //       u_id: store.publicUserInfo.info.u_id,
+  //       follower_id: store.userInfo,
+  //       flag: flag
+  //     }).then(res=>{
+  //       setStore({
+  //         ...store,
+  //         publicUserInfo: res.data
+  //       })
+  //       var flag = false
+  //       res.data.followers.map((follower, index)=>{
+  //         if(follower.follower_id == store.userInfo){
+  //           flag = true
+  //         }
+  //       })
+  //       if(flag)setFollowing(true)
+  //       else setFollowing(false)
+  //       setTimeout(()=>{
+        //   setLoading(false)
+        // }, 300)
+  //     })
+  // }
   const followToggleAction = (flag) => {
     setLoading(true)
     toggleFollow(
@@ -35,10 +60,11 @@ export default function ProfileHeader() {
         follower_id: store.userInfo,
         flag: flag
       }).then(res=>{
-        setStore({
-          ...store,
-          publicUserInfo: res.data
-        })
+        // setStore({
+        //   ...store,
+        //   publicUserInfo: res.data
+        // })
+        var temp = res.data
         var flag = false
         res.data.followers.map((follower, index)=>{
           if(follower.follower_id == store.userInfo){
@@ -47,7 +73,18 @@ export default function ProfileHeader() {
         })
         if(flag)setFollowing(true)
         else setFollowing(false)
-        setLoading(false)
+        setTimeout(()=>{
+          setTimeout(()=>{
+          setLoading(false)
+        }, 300)
+        }, 300)
+        getProfileInfo(store.userInfo).then(res=>{
+          setStore({
+            ...store,
+            publicUserInfo: temp,
+            userProfile: res.data
+          })
+        })
       })
   }
   return (

@@ -47,7 +47,9 @@ export default function addPostScreen() {
   React.useEffect(()=>{
     setLoading(true)
     getCategories().then(res=>{
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
       console.log(res)
       if(res?.data?.length){
         var temp = []

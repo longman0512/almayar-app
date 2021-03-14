@@ -335,3 +335,23 @@ export async function getPrivateMessage(u_id, client_id) {
 
   return DATA
 }
+
+export async function searchUserApi(searchTxt, u_id){
+  var data = new FormData();
+  data.append('api_key', ' admin@1474?');
+  data.append('searchTxt', searchTxt);
+  data.append('u_id', u_id);
+  
+
+  const DATA = await Axios.post(
+    "searchUser",
+    data)
+  .then(res => {
+    return res.data
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+  return DATA
+}

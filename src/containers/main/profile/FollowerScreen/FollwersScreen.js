@@ -18,29 +18,7 @@ export default function FollowersScreen({navigation}) {
 
     <SafeAreaView style={{backgroundColor: colors.background}}>
       {/* <Loading loading={loading}/> */}
-      <ScrollView
-        onScrollBeginDrag={()=>{
-          console.log("Drag start")
-        }}
-        onScroll={()=>{
-          console.log("on scroll")
-        }}
-        // onScrollEndDrag={({nativeEvent})=>{
-        //   console.log("drag end")
-        //   if (isCloseToBottom(nativeEvent)) {
-        //     getNextPage()
-        //   }
-        //   if (isCloseToTop(nativeEvent)) {
-        //     getPrevPage()
-        //   }
-        // }}
-        scrollEventThrottle={400}
-      >
-
-         <>
-            <FollowersList navigation = {navigation}/>
-         </>
-      </ScrollView>
+      <FollowersList navigation = {navigation}/>
     </SafeAreaView>
   );
 }

@@ -18,7 +18,9 @@ export default function PostHeader({post}) {
     console.log(typeof user)
     setLoading(true)
     getProfileInfo(user).then(res=>{
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
       console.log(res, "in component")
       if(res.status){
         setStore({

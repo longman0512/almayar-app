@@ -51,7 +51,9 @@ export default function editProduct() {
   React.useEffect(()=>{
     setLoading(true)
     getCategories().then(res=>{
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
       if(res?.data?.length){
         var temp = []
         res.data.map((cat, index)=>{
@@ -133,7 +135,9 @@ export default function editProduct() {
       image_changed: store.ProductDetail.imgUrl==imageFile.path?0:1
     }).then((res)=>{
       console.log(res, "data from api")
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
       if(!res.status){
         showAlert('warning', res.msg)
       } else {

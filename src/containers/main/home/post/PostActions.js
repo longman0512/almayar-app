@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import colors from '../../../../res/colors';
 import StoreContext from "../../../../context/index";
 import { ActivityIndicator } from 'react-native-paper';
-import { toggleLike } from '../../../../utils/API';
+import { toggleLike, getPrivateMessage } from '../../../../utils/API';
 import Loading from "../../../../components/Loading"
 
 function tapToFavorite(favoriteIcon) {
@@ -53,25 +53,39 @@ export default function PostActions({post}) {
         ...store,
         products: temp
       })
-      // if(res.data.flag){
-      //   setLikeIcon(true)
-      // } else {
-      //   setLikeIcon(false)
-      // }
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
+    })
+  }
+
+  const goDirectMessage = ()=>{
+    if(store.userInfo == post.u_id) return false
+    setLoading(true)
+    getPrivateMessage(store.userInfo, post.u_id).then((res)=>{
+      console.log(res.data)
+      setStore({
+        ...store,
+        messages: res.data
+      })
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
+      navigation.navigate("MessageScreen")
+    }).catch((err)=>{
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
     })
   }
   return (
     <View style={Styles.container}>
       <Loading loading={loading}/>
       <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
-        {/* <TouchableOpacity onPress={() => setFavoriteIcon(favoriteIcon + 1)}>
-          <Image source={tapToFavorite(favoriteIcon)} style={Styles.actionIcons} />
-        </TouchableOpacity> */}
         <TouchableOpacity onPress = {()=>{likeAction(post.key)}}>
           <Image source={likIcon?images.like_full:images.like} style={Styles.actionIcons} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {navigation.navigate('MessageScreen')}}>
+        <TouchableOpacity onPress={() => {goDirectMessage()}}>
           <Image source={images.direct_message} style={Styles.actionIcons} />
         </TouchableOpacity>
       </View>
@@ -84,7 +98,6 @@ const Styles = StyleSheet.create({
   container: {
     justifyContent: 'space-between',
     flexDirection: 'row',
-    //paddingStart: 20,
     marginEnd: 15,
     marginTop: 15,
   },

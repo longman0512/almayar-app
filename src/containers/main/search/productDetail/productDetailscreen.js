@@ -82,7 +82,9 @@ export default function productDetailscreen() {
         ...store,
         products: temp
       })
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
     })
   }
   var videoBuffer = ''

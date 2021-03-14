@@ -51,7 +51,9 @@ export default function homeScreen({navigation}) {
     setLoading(true)
     getNextPageApi(Number(store.cur_page)+1).then((res)=>{
       console.log(res)
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
       if(res.data.products.length)
       setStore({
         ...store,
@@ -67,7 +69,9 @@ export default function homeScreen({navigation}) {
     if(!(store.cur_page - 1 < 0)){
       setLoading(true)
       getNextPageApi(Number(store.cur_page)-1).then((res)=>{      
-        setLoading(false)
+        setTimeout(()=>{
+          setLoading(false)
+        }, 300)
         setStore({
           ...store,
           products: res.data.products,
