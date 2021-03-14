@@ -25,6 +25,7 @@ import { setSocket, emitEvent, onMessageReceived, offEvent } from '../../../../u
 import stringify from '../../../../utils/stringify'
 import parse from '../../../../utils/parse'
 import { ActivityIndicator } from 'react-native-paper';
+import AnimatedEllipsis from 'react-native-animated-ellipsis';
 
 LogBox.ignoreLogs(['Warning: ...']);
 const windowWidth = Dimensions.get('window').width;
@@ -34,7 +35,7 @@ export default function MessageScreen() {
   const [emojiShow, setEmojiShow] = React.useState(false);
   const [sending, setSending] = React.useState(false);
   const [message, setMessage] = React.useState("");
-  const [messageData, setMessageData] = React.useState("");
+  const [cTyping, setCTyping] = React.useState(false);
   const { store, setStore } = React.useContext(StoreContext)
   var scrollViewRef = React.useRef();
 
@@ -43,8 +44,12 @@ export default function MessageScreen() {
     // scrollViewRef?.scrollToEnd({ animated: true });
     offEvent("newMessage")
     offEvent("newUpdated")
+    offEvent("typing")
     onMessageReceived("newMessage", receiveMessage)
     onMessageReceived("newUpdated", newUpdated)
+    onMessageReceived("typing", onTyping)
+
+    
     setTimeout(()=>{
       emitEvent("readMsg", {
           from_id: store.userInfo,
@@ -124,6 +129,21 @@ export default function MessageScreen() {
     })
   }
 
+  const isTyping = () => {
+    emitEvent("typing", {
+      from_id: store.userInfo,
+      to_id: store.messages.clientInfo.u_id
+    })
+  }
+
+  const onTyping = (data)=>{
+    if(data.client_id == store.messages.clientInfo.u_id){
+      setCTyping(true)
+      setTimeout(()=>{
+        setCTyping(false)
+      }, 300)
+    }
+  }
   return (
     <View style={{ flex: 1}}>
     <ScrollView
@@ -165,6 +185,7 @@ export default function MessageScreen() {
       }
       
     </ScrollView>
+      
       <EmojiBoard showBoard={emojiShow} onClick={onClick} onRemove={()=>{setEmojiShow(!emojiShow);}} />
       <View style={{height: 70, borderTopWidth: 1, borderColor: colors.primary, backgroundColor: colors.primary, flexDirection: "row", justifyContent: "center", alignItems: "center", width: "100%"}}>
         <View style={{width: (windowWidth-30), height: "75%", backgroundColor: "white", borderRadius: 20, flexDirection: "row", justifyContent: "flex-start", alignItems: "center"}}>
@@ -178,7 +199,7 @@ export default function MessageScreen() {
             style={{width: (windowWidth-120), backgroundColor: "white", borderRadius: 20, fontSize: 18}}
             placeholder="Type a message"
             placeholderTextColor={colors.textFaded2}
-            onChangeText = {(txt)=>{console.log(txt); setMessage(txt)}}
+            onChangeText = {(txt)=>{ setMessage(txt); isTyping()}}
             value = {message}
           />
           <TouchableOpacity

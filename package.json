@@ -1,6 +1,6 @@
 {
-  "name": "Instagram",
-  "version": "0.0.1",
+  "name": "almayar",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -23,6 +23,7 @@
     "moment": "^2.29.1",
     "react": "16.13.1",
     "react-native": "^0.63.2",
+    "react-native-animated-ellipsis": "^2.0.0",
     "react-native-camera": "^3.36.0",
     "react-native-collapsible": "^1.5.3",
     "react-native-credit-card-input": "^0.4.1",

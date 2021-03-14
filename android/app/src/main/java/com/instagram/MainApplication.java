@@ -1,4 +1,4 @@
-package com.instagram;
+package com.almayar;
 
 import android.app.Application;
 import android.content.Context;
