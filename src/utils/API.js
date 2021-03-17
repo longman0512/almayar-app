@@ -13,7 +13,6 @@ export async function getProfileInfo(user) {
       return true;
     },
   }).then((res) => {
-    console.log("user data in api", res.data)
     return res.data;
   }).catch(error =>{
     console.log(error)
@@ -37,7 +36,6 @@ export async function toggleLike(user, pro_id) {
   }).then((res) => {
     return res.data;
   }).catch(error =>{
-    console.log(error)
   });
   return DATA;
 }
@@ -57,7 +55,6 @@ export async function getProDetail(pro_id) {
   }).then((res) => {
     return res.data;
   }).catch(error =>{
-    console.log(error)
   });
   return DATA;
 }
@@ -66,7 +63,6 @@ export async function getNextPageApi(pageNum) {
   var data = new FormData();
   data.append('api_key', ' admin@1474?');
   data.append('pageNum', pageNum);
-  console.log(data)
   const DATA = await Axios({
     method: 'post',
     url: 'getNextPage',
@@ -85,7 +81,6 @@ export async function getNextPageApi(pageNum) {
 export async function getCategories() {
   var data = new FormData();
   data.append('api_key', ' admin@1474?');
-  console.log(data)
   const DATA = await Axios({
     method: 'post',
     url: 'getCategories',
@@ -120,13 +115,11 @@ export async function addProductApi(proData) {
       name:'products',
       type: proData.pro_media.mime, 
   });
-  console.log(data, "in api")
 
   const DATA = await Axios.post(
     "addProduct",
     data)
   .then(res => {
-    console.log(res.data)
     return res.data
   })
   .catch(err => {
@@ -161,13 +154,11 @@ export async function editProductApi(proData) {
       type: proData.pro_media.mime, 
   });
 
-  console.log(data, "edit in api")
-
   const DATA = await Axios.post(
     proData.image_changed==1?"editProductWithImage":"editProduct",
     data)
   .then(res => {
-    console.log(res.data)
+    
     return res.data
   })
   .catch(err => {
@@ -178,15 +169,13 @@ export async function editProductApi(proData) {
 }
 
 export async function getAllProducts(catData) {
-
-  console.log(catData)
   const DATA = await Axios.post(
     "getAllProducts",
     {
       cat_id: catData
     })
   .then(res => {
-    console.log(res.data)
+    
     return res.data
   })
   .catch(err => {
@@ -202,7 +191,7 @@ export async function toggleFollow(data) {
     "toggleFollow",
     data)
   .then(res => {
-    console.log(res.data)
+    
     return res.data
   })
   .catch(err => {
@@ -228,8 +217,7 @@ export async function editProfile(uploadData) {
       name:'userProfile.jpg',
       type: 'image/jpg', 
   });
-
-  console.log("request api", data)
+  
   const DATA = await Axios.post(
     "editProfile",
     data)
@@ -249,8 +237,7 @@ export async function upgradeMembership(tokenId, month, u_id) {
   data.append('c_token', tokenId);
   data.append('expire', month);
   data.append('u_id', u_id);
-
-  console.log("request api", data)
+  
   const DATA = await Axios.post(
     "upgradeMembership",
     data)

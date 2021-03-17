@@ -51,7 +51,6 @@ function Test({item}) {
   const navigation = useNavigation();
   const  { store, setStore } = React.useContext(StoreContext);
   const [loading, setLoading] = React.useState(false);
-  console.log(item, "in detail page")
   const viewProductDetail = (item) => {
     setStore({
       ...store,

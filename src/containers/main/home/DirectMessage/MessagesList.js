@@ -22,10 +22,8 @@ export default function MessagesList() {
   const navigation = useNavigation();
 
   const goDirectMessage = (item)=>{
-    console.log(item)
     setLoading(true)
     getPrivateMessage(store.userInfo, item.userID).then((res)=>{
-      console.log(res.data)
       setStore({
         ...store,
         messages: res.data

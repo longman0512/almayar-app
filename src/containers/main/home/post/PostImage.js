@@ -15,7 +15,6 @@ export default function PostImage({post}) {
 
   const viewProductDetail = (pro_id) => {
     setLoading(true)
-    console.log(post)
     setStore({
       ...store,
       ProductDetail: post
@@ -24,13 +23,8 @@ export default function PostImage({post}) {
           setLoading(false)
         }, 300)
     navigation.navigate('ProductDetail')
-
-    // getProDetail(pro_id).then(res=>{
-    //   console.log(res)
-    // })
   }
   var videoBuffer = ''
-  console.log(post)
   return  <>
             <Loading loading={loading}/>
             <TouchableOpacity onPress={()=>{viewProductDetail(post.key)}}>

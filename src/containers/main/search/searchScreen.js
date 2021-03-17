@@ -31,7 +31,9 @@ export default function searchScreen() {
         })
         setOrgCat(res.data)
         setCategory(temp)
-        console.log(res.data[0].cat_id, "category data")
+        setTimeout(()=>{
+          setLoading(false)
+        }, 300)
         if(res.data.length)
         getAllProducts(res.data[0]).then(res=>{
           setStore({
@@ -40,8 +42,8 @@ export default function searchScreen() {
             filteredProducts: res.data
           })
           setTimeout(()=>{
-          setLoading(false)
-        }, 300)
+            setLoading(false)
+          }, 300)
         })
       }
     })

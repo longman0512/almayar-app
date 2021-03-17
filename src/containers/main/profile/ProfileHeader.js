@@ -16,11 +16,9 @@ export default function ProfileHeader() {
   const navigation = useNavigation();
 
   const goFollows = () => {
-    console.log("adfasdfsadf")
     if(store.userProfile?.followers_num){
       setLoading(true)
       getFollowers(store.userInfo).then(res=>{
-        console.log(res.data)
         setStore({
           ...store,
           followers: res.data
@@ -35,11 +33,9 @@ export default function ProfileHeader() {
   }
 
   const goFollowing = () => {
-    console.log("adfasdfsadf")
     if(store.userProfile?.following_num){
       setLoading(true)
       getFollowings(store.userInfo).then(res=>{
-        console.log(res.data)
         setStore({
           ...store,
           followers: res.data

@@ -3,7 +3,6 @@ let socket = null;
 
 export const setSocket = () => {
   socket = io("http://192.168.110.121:9090");
-  console.log(socket)
 }
 
 // export const socketClient = io("http://127.0.0.1:4001");
@@ -24,7 +23,6 @@ export const onMessageReceived = (socketListenId, callback) => {
 }
 
 export const emitEvent = (event, data) => {
-  console.log(event)
     socket.emit(event, data);
 }
 

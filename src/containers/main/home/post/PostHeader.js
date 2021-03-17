@@ -15,13 +15,11 @@ export default function PostHeader({post}) {
   const  { store, setStore } = React.useContext(StoreContext);
   const [loading, setLoading] = React.useState(false);
   const viewProfile = (user)=>{
-    console.log(typeof user)
     setLoading(true)
     getProfileInfo(user).then(res=>{
       setTimeout(()=>{
           setLoading(false)
         }, 300)
-      console.log(res, "in component")
       if(res.status){
         setStore({
           ...store,

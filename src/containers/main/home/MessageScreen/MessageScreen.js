@@ -40,8 +40,6 @@ export default function MessageScreen() {
   var scrollViewRef = React.useRef();
 
   React.useEffect(()=>{
-    console.log(scrollViewRef)
-    // scrollViewRef?.scrollToEnd({ animated: true });
     offEvent("newMessage")
     offEvent("newUpdated")
     offEvent("typing")
@@ -67,7 +65,6 @@ export default function MessageScreen() {
 
 
   const onClick = emoji => {
-    console.log(emoji);
     setMessage(message+emoji.code)
     setEmojiShow(!emojiShow)
   };

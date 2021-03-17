@@ -95,8 +95,8 @@ const Styles = StyleSheet.create({
     color: colors.primary
   },
   actionIcons: {
-    width: 23,
-    height: 23,
+    width: 18,
+    height: 18,
     marginEnd: 10
   },
   likeContainer: {

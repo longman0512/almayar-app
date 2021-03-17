@@ -49,7 +49,6 @@ export default function () {
       ...store,
       loading: true
     })
-    console.log("get messages")
     getMessageApi(store.userInfo).then(res=>{
       
       setStore({

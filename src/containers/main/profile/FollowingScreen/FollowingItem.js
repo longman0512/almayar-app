@@ -33,7 +33,6 @@ export default function FollowingItem({data, resetData}) {
           if(t.u_id != data.u_id)
           followers.push(t)
         })
-        console.log(followers)
         getProfileInfo(store.userInfo).then(res=>{
           setStore({
             ...store,
@@ -49,7 +48,6 @@ export default function FollowingItem({data, resetData}) {
   }
 
   const goPublicProfile = () => {
-    console.log("data")
     setLoading(true)
     getProfileInfo(data.u_id).then(res=>{
       setStore({

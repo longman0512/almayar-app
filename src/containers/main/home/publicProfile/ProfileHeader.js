@@ -16,7 +16,6 @@ export default function ProfileHeader() {
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(()=>{
-    console.log(store.userInfo)
     var flag = false
     store.publicUserInfo.followers.map((follower, index)=>{
       if(follower.follower_id == store.userInfo){

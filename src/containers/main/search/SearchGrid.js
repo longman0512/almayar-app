@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Image, StyleSheet, Dimensions} from 'react-native';
+import {View, Image, StyleSheet, Dimensions, Text} from 'react-native';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import images from 'res/images';
 import StoreContext from "../../../context/index";
@@ -96,6 +96,14 @@ export default function SearchGrid() {
                 rate={1.0}
                 onError={videoError}
                 style={Styles.postImg} />:<Image source={{ uri:  item.imgUrl}} style={Styles.postImg} />}
+                <Text style = {Styles.title}>{item.title}</Text>
+                
+            {
+              item.likeCount?<View style={Styles.likeContainer}>
+                <Image source={images.like_full} style={Styles.actionIcons} />
+                <Text style = {Styles.likeText}>{item.likeCount}</Text>
+              </View>:null
+            }
             </TouchableOpacity>
         </View>
         )}
@@ -112,4 +120,32 @@ const Styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.primary
   },
+  title:{
+    position: 'absolute',
+    top: 2, 
+    right: 3,
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: "rgba(0,0,0, 0.2)",
+    color: colors.primary,
+    fontSize: 18
+  },
+  likeText:{
+    color: colors.primary
+  },
+  actionIcons: {
+    width: 18,
+    height: 18,
+    marginEnd: 10
+  },
+  likeContainer: {
+    position: 'absolute',
+    bottom: 2, 
+    right: 3,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: "rgba(0,0,0, 0.2)",
+  }
 });

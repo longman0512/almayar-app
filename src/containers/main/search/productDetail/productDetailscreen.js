@@ -41,7 +41,6 @@ export default function productDetailscreen() {
   const [loading, setLoading] = React.useState(false);
 
   const product = store.ProductDetail
-  console.log(product, "product")
   React.useEffect(()=>{
     store.ProductDetail.likes.map((item, index)=>{
       if(!likIcon)

@@ -134,7 +134,6 @@ export default function editProduct() {
       pro_status: proStatus,
       image_changed: store.ProductDetail.imgUrl==imageFile.path?0:1
     }).then((res)=>{
-      console.log(res, "data from api")
       setTimeout(()=>{
           setLoading(false)
         }, 300)
@@ -147,7 +146,6 @@ export default function editProduct() {
           userProfile: res.data
         })
         res.data.products.map((pro, index)=>{
-          console.log(pro)
         })
       }
     })

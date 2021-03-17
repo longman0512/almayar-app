@@ -23,7 +23,6 @@ export default function profileScreen() {
   React.useEffect(()=>{
     setLoading(true)
     getProfileInfo(store.userInfo).then(res=>{
-      console.log(res.data.products.length)
       setStore({
         ...store,
         userProfile: res.data

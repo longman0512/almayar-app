@@ -10,19 +10,12 @@ import { ActivityIndicator } from 'react-native-paper';
 import Loading from "../../../../components/Loading"
 
 export default function StoryListItem({item, storyOnPress}) {
-  console.log(item)
   const navigation = useNavigation();
   const  { store, setStore } = React.useContext(StoreContext);
   const [loading, setLoading] = React.useState(false);
 
   const viewProfile = (user)=>{
-    // console.log(typeof user)
     setLoading(true)
-    // if(store.userInfo == user){
-    //   getUserInfo(user).then(res=>{
-
-    //   })
-    // }
     getProfileInfo(user).then(res=>{
       setTimeout(()=>{
           setLoading(false)

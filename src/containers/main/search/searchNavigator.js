@@ -12,16 +12,13 @@ export default function searchNavigator() {
   const Stack = createStackNavigator();
   const  { store, setStore } = React.useContext(StoreContext);
   const filterData = (txt)=> {
-    console.log(txt)
     if(txt){
       var temp = []
       store.searchedProducts.map((pro, index)=>{
         if(pro.title.toLowerCase().indexOf(txt.toLowerCase()) >= 0){
           temp.push(pro)
         }
-        console.log(pro.title.toLowerCase(), txt.toLowerCase(), pro.title.toLowerCase().indexOf(txt.toLowerCase()))
       })
-      console.log(temp.length, store.searchedProducts.length, "length data")
       setStore({
         ...store,
         filteredProducts: temp

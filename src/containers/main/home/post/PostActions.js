@@ -33,7 +33,6 @@ export default function PostActions({post}) {
     })
   }, [])
   const likeAction = (pro_id)=>{
-    console.log(store)
     setLoading(true)
     toggleLike(store.userInfo, pro_id).then(res=>{
       var temp = []
@@ -63,7 +62,6 @@ export default function PostActions({post}) {
     if(store.userInfo == post.u_id) return false
     setLoading(true)
     getPrivateMessage(store.userInfo, post.u_id).then((res)=>{
-      console.log(res.data)
       setStore({
         ...store,
         messages: res.data

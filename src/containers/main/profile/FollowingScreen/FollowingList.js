@@ -16,15 +16,12 @@ export default function FollowingList() {
   }, [])
   
   const dataFilter = (txt) => {
-    console.log(txt);
     var temp = [];
     store.followers.map((f, index)=>{
-      console.log(f.u_name)
       if(f.u_name.toLowerCase().indexOf(txt.toLowerCase())>=0){
         temp.push(f)
       }
     })
-    console.log(temp.length)
     if(!txt){
       setFiltered(store.followers)
     } else {

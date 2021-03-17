@@ -47,10 +47,7 @@ export default function subscription() {
         cvc: cardInfo.values.cvc,
      });
      
-     console.log(token)
-     
      upgradeMembership(token.id, payAmount, store.userInfo).then(res=>{
-       console.log(res, "in function")
        setTimeout(()=>{
           setLoading(false)
         }, 300)
