@@ -5,21 +5,21 @@ import images from 'res/images';
 import colors from 'res/colors';
 import PostImage from './PostImage';
 import { useNavigation } from '@react-navigation/native';
-import { Overlay } from 'react-native-elements'
 import { ActivityIndicator } from 'react-native-paper';
 import StoreContext from "../../../../context/index";
 import { getProfileInfo,  } from '../../../../utils/API';
+import Loading from "../../../../components/Loading"
 
 export default function PostHeader({post}) {
   const navigation = useNavigation();
   const  { store, setStore } = React.useContext(StoreContext);
   const [loading, setLoading] = React.useState(false);
   const viewProfile = (user)=>{
-    console.log(typeof user)
     setLoading(true)
     getProfileInfo(user).then(res=>{
-      setLoading(false)
-      console.log(res, "in component")
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
       if(res.status){
         setStore({
           ...store,
@@ -37,9 +37,7 @@ export default function PostHeader({post}) {
   }
   return (
     <TouchableOpacity style={Styles.container} onPress={()=>{viewProfile(post.u_id)}}>
-      <Overlay isVisible={loading}>
-        <ActivityIndicator animating={true} />
-      </Overlay>
+      <Loading loading={loading}/>
       <View style={Styles.nameContainer}>
         <Image
           source={post.avatar?{uri: post.avatar}:images.avatar}

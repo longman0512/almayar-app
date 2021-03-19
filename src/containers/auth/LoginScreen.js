@@ -53,8 +53,9 @@ export default function LoginScreen({navigation}) {
         return true;
       },
     }).then(res=>{
-      setLoading(false)
-      console.log(res.data.data)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
       if(res.data.status == true){
         setStore(res.data.data)
         navigation.navigate('MainScreen');
@@ -63,8 +64,9 @@ export default function LoginScreen({navigation}) {
       }
       return res.data;
     }).catch(error=>{
-      console.log(error, "error")
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
       alert("Something Error Please contact Admin")
     });
   };
@@ -95,7 +97,7 @@ export default function LoginScreen({navigation}) {
           placeholder="Phone number (+9647755526119)"
           placeholderTextColor={colors.textFaded2}
           onChangeText = {(txt)=>{setPhoneNumber(txt)}}
-          value = {'+9647755526199'}
+          value = {phoneNumber}
         />
       </View>
       <View style={Styles.passwordContainer}>
@@ -106,7 +108,7 @@ export default function LoginScreen({navigation}) {
           placeholderTextColor={colors.textFaded2}
           onChangeText = {(txt)=>{setPwd(txt)}}
           secureTextEntry={true}
-          value={123}
+          value={'123'}
         />
       </View>
       <View style={Styles.forgotPasswordContainer}>

@@ -2,16 +2,54 @@ import React from 'react';
 import {View, Image, Text, StyleSheet} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+
 import colors from '../../../res/colors';
 import images from '../../../res/images';
 import Loading from "../../../components/Loading"
 import StoreContext from "../../../context/index";
+import { getFollowers, getFollowings } from "../../../utils/API"
 
 export default function ProfileHeader() {
   const  { store, setStore } = React.useContext(StoreContext);
+  const [loading, setLoading] = React.useState(false);
+  const navigation = useNavigation();
 
+  const goFollows = () => {
+    if(store.userProfile?.followers_num){
+      setLoading(true)
+      getFollowers(store.userInfo).then(res=>{
+        setStore({
+          ...store,
+          followers: res.data
+        })
+        setTimeout(()=>{
+          setLoading(false)
+        }, 300)
+        navigation.navigate('Followers')
+      })
+    }
+    
+  }
+
+  const goFollowing = () => {
+    if(store.userProfile?.following_num){
+      setLoading(true)
+      getFollowings(store.userInfo).then(res=>{
+        setStore({
+          ...store,
+          followers: res.data
+        })
+        setTimeout(()=>{
+          setLoading(false)
+        }, 300)
+        navigation.navigate('Followings')
+      })
+    }
+  }
   return (
     <View style={Styles.container}>
+      <Loading loading={loading}/>
       <TouchableOpacity>
         <LinearGradient
           colors={[colors.primary, colors.secondary, colors.primary]}
@@ -23,7 +61,7 @@ export default function ProfileHeader() {
               store?.userProfile?.info?.u_avatar?<Image
                   source={{uri: store?.userProfile?.info?.u_avatar}}
                   style={Styles.prImagefilePicture}
-                />:<Text style={Styles.profieText}>{store.userProfile?.info?.u_name[0]+store.userProfile?.info?.u_name[1]}</Text>
+                />:<Text style={Styles.profieText}>{store.userProfile?.info?.u_name[0]?store.userProfile?.info?.u_name[0]+store.userProfile?.info?.u_name[1]:null}</Text>
             }
           </View>
         </LinearGradient>
@@ -41,13 +79,13 @@ export default function ProfileHeader() {
           </TouchableOpacity>
         </View>
         <View style={Styles.container3}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={goFollows}>
             <Text style={Styles.numberContainer}>{store.userProfile?.followers_num}</Text>
             <Text style={Styles.text}>Followers</Text>
           </TouchableOpacity>
         </View>
         <View style={Styles.container3}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={goFollowing}>
             <Text style={Styles.numberContainer}>{store.userProfile?.following_num}</Text>
             <Text style={Styles.text}>Following</Text>
           </TouchableOpacity>
@@ -77,7 +115,7 @@ const Styles = StyleSheet.create({
     fontSize: 40
   },
   numberContainer: {
-    color: 'black',
+    color: colors.secondary,
     fontWeight: 'bold',
     alignSelf: 'center',
     fontSize: 15,
@@ -89,7 +127,7 @@ const Styles = StyleSheet.create({
     marginEnd: 20,
   },
   text: {
-    color: 'black',
+    color: colors.primary,
     //fontWeight: 'bold',
     alignSelf: 'center',
   },

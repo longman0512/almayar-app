@@ -56,14 +56,19 @@ export default function profileScreen() {
         ...store,
         userProfile: res.data
       })
+      console.log("return data")
       if(res.status){
         showAlert("success", res.msg)
       } else {
         showAlert("warning", "Edit Failed")
       }
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
     }).catch(error=>{
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
     })
   }
 

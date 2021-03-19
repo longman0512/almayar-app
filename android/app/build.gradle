@@ -129,7 +129,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.instagram"
+        applicationId "com.almayar"
         minSdkVersion rootProject.ext.minSdkVersion
         multiDexEnabled true
         targetSdkVersion rootProject.ext.targetSdkVersion

@@ -12,9 +12,12 @@ import MessageScreen from './home/MessageScreen/MessageScreen';
 import SplashScreen from '../auth/SplashScreen'
 import SignUpScreen from '../auth/SignUpScreen'
 import LoginScreen from '../auth/LoginScreen'
+import StoreContext from '../../context/index'
 
 export default function MainNavigator({navigation}) {
   const Stack = createStackNavigator();
+  const { store, setStore } = React.useContext(StoreContext)
+  
   const NavigateToStoryCamera = () => navigation.navigate('StoryCamera');
   return (
     <Stack.Navigator>
@@ -126,7 +129,7 @@ export default function MainNavigator({navigation}) {
           headerTitle: () => (
             <View>
               <Text style={{color: 'black', fontWeight: 'bold', fontSize: 18}}>
-                juan
+                {store?.messages?.clientInfo?.u_name}
               </Text>
             </View>
           ),

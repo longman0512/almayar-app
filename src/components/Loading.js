@@ -10,7 +10,7 @@ import { ActivityIndicator } from 'react-native-paper';
 
 export default function Loading(props) {
   return (<Overlay isVisible={props.loading}>
-    <ActivityIndicator animating={true} />
+        <ActivityIndicator animating={true} color="#e59c11" style={{backgroundColor: "white"}}/>
   </Overlay>
   );
 }
@@ -20,8 +20,6 @@ const Styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width,
     zIndex: 100
   }
 });

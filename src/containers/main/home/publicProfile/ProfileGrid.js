@@ -1,7 +1,6 @@
 import React from 'react';
-import {View, Image, StyleSheet, Dimensions} from 'react-native';
+import {View, Image, Text, StyleSheet, Dimensions} from 'react-native';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
-import { Overlay } from 'react-native-elements'
 import { ActivityIndicator } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import Video from 'react-native-video';
@@ -9,75 +8,9 @@ import { FlatGrid } from "react-native-super-grid";
 import colors from '../../../../res/colors';
 import images from '../../../../res/images';
 import StoreContext from "../../../../context/index";
+import Loading from "../../../../components/Loading"
 
 const windowWidth = Dimensions.get('screen').width;
-
-const data = [
-  {
-    key: '1',
-    proImage: images.pro1
-  },
-  {
-    key: '2',
-    proImage: images.pro2
-  },
-  {
-    key: '3',
-    proImage: images.pro3
-  },
-  {
-    key: '4',
-    proImage: images.pro4
-  },
-  {
-    key: '5',
-    proImage: images.pro5
-  },
-  {
-    key: '6',
-    proImage: images.pro6
-  },
-  /*{key: '7'},
-  {key: '8'},
-  {key: '9'},
-  {key: '10'},
-  {key: '11'},
-  {key: '12'},
-  {key: '13'},
-  {key: '14'},*/
-];
-
-function Test({item}) {
-  const navigation = useNavigation();
-  const  { store, setStore } = React.useContext(StoreContext);
-  const [loading, setLoading] = React.useState(false);
-  console.log(item, "in detail page")
-  const viewProductDetail = (item) => {
-    setStore({
-      ...store,
-      ProductDetail: item
-    })
-    navigation.navigate('ProductDetail')
-  }
-  var videoBuffer = ''
-  var videoError = ''
-  return (
-    <View style={{flex: 1}}>
-      <Overlay isVisible={loading}>
-        <ActivityIndicator animating={true} />
-      </Overlay>
-      <TouchableOpacity
-         onPress={()=>{viewProductDetail(item)}}>
-        {item.type =="video"?<Video source={{uri: item.imgUrl}}
-                onBuffer={videoBuffer}
-                repeat
-                rate={1.0}
-                onError={videoError}
-                style={Styles.postImg} />:<Image source={{ uri:  item.imgUrl}} style={Styles.postImg} />}
-      </TouchableOpacity>
-    </View>
-  );
-}
 
 export default function ProfileGrid() {
   const  { store, setStore } = React.useContext(StoreContext);
@@ -90,16 +23,16 @@ export default function ProfileGrid() {
       ...store,
       ProductDetail: item
     })
-    setLoading(false)
+    setTimeout(()=>{
+          setLoading(false)
+        }, 300)
     navigation.navigate('ProductDetail')
   }
   var videoBuffer = ''
   var videoError = ''
   return (
     <>
-    <Overlay isVisible={loading}>
-      <ActivityIndicator animating={true} />
-    </Overlay>
+    <Loading loading={loading}/>
     <FlatGrid
         itemDimension={windowWidth / 3 - 5}
         style={{backgroundColor: 'white'}}
@@ -116,24 +49,26 @@ export default function ProfileGrid() {
                 repeat
                 rate={1.0}
                 onError={videoError}
-                style={Styles.postImg} />:<Image source={{ uri:  item.imgUrl}} style={Styles.postImg} />}
+                style={Styles.postVid} />:<Image source={{ uri:  item.imgUrl}} style={Styles.postImg} />}
+                {
+                  item.pro_status == "draft"?<Text style = {Styles.draftText}>Draft</Text>:null
+                }
             </TouchableOpacity>
         </View>
         )}
       />
     </>
-    // <FlatList
-    //   data={store.publicUserInfo.products}
-    //   style={{marginTop: 2, marginStart: 2}}
-    //   renderItem={({item, index}) => <Test item={item}/>}
-    //   numColumns={3}
-    //   indicatorStyle={'black'}
-    //   showsVerticalScrollIndicator={true}
-    // />
   );
 }
 
 const Styles = StyleSheet.create({
+  postVid: {
+    height: windowWidth / 3-5,
+    width: windowWidth / 3-5,
+    resizeMode: 'cover',
+    borderWidth: 1,
+    borderColor: colors.primary
+  },
   postImg: {
     height: windowWidth / 3-5,
     width: windowWidth / 3-5,
@@ -141,4 +76,13 @@ const Styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.primary
   },
+  draftText:{
+    position: 'absolute',
+    top: 2, 
+    right: 3,
+    padding: 3,
+    borderRadius: 3,
+    backgroundColor: "rgba(255,255,255, 0.6)",
+    color: colors.primary
+  }
 });

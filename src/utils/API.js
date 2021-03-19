@@ -13,7 +13,6 @@ export async function getProfileInfo(user) {
       return true;
     },
   }).then((res) => {
-    console.log("user data in api", res.data)
     return res.data;
   }).catch(error =>{
     console.log(error)
@@ -37,7 +36,6 @@ export async function toggleLike(user, pro_id) {
   }).then((res) => {
     return res.data;
   }).catch(error =>{
-    console.log(error)
   });
   return DATA;
 }
@@ -57,7 +55,6 @@ export async function getProDetail(pro_id) {
   }).then((res) => {
     return res.data;
   }).catch(error =>{
-    console.log(error)
   });
   return DATA;
 }
@@ -66,7 +63,6 @@ export async function getNextPageApi(pageNum) {
   var data = new FormData();
   data.append('api_key', ' admin@1474?');
   data.append('pageNum', pageNum);
-  console.log(data)
   const DATA = await Axios({
     method: 'post',
     url: 'getNextPage',
@@ -85,7 +81,6 @@ export async function getNextPageApi(pageNum) {
 export async function getCategories() {
   var data = new FormData();
   data.append('api_key', ' admin@1474?');
-  console.log(data)
   const DATA = await Axios({
     method: 'post',
     url: 'getCategories',
@@ -120,13 +115,50 @@ export async function addProductApi(proData) {
       name:'products',
       type: proData.pro_media.mime, 
   });
-  console.log(data, "in api")
 
   const DATA = await Axios.post(
     "addProduct",
     data)
   .then(res => {
-    console.log(res.data)
+    return res.data
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+  return DATA
+}
+
+export async function editProductApi(proData) {
+  var data = new FormData();
+  data.append('api_key', ' admin@1474?');
+  data.append('category', proData.category);
+  data.append('pro_id', proData.pro_id);
+  data.append('pro_name', proData.pro_name);
+  data.append('pro_price', proData.pro_price);
+  data.append('pro_description', proData.pro_description);
+  data.append('pro_discount_type', proData.pro_discount_type);
+  data.append('pro_discount_amount', proData.pro_discount_amount);
+  data.append('user_id', proData.user_id);
+  data.append('pro_type', proData.pro_media.mime.substring(0, 5));
+  data.append('valid_from', proData.valid_from.toDateString());
+  data.append('valid_to', proData.valid_to.toDateString());
+  data.append('pro_status', proData.pro_status);
+  data.append('user_id', proData.user_id);
+  data.append('image_changed', proData.image_changed);
+  if(proData.image_changed == 1)
+  data.append('pro_media',
+  {
+      uri: proData.pro_media.path,
+      name:'products',
+      type: proData.pro_media.mime, 
+  });
+
+  const DATA = await Axios.post(
+    proData.image_changed==1?"editProductWithImage":"editProduct",
+    data)
+  .then(res => {
+    
     return res.data
   })
   .catch(err => {
@@ -137,15 +169,13 @@ export async function addProductApi(proData) {
 }
 
 export async function getAllProducts(catData) {
-
-  console.log(catData)
   const DATA = await Axios.post(
     "getAllProducts",
     {
       cat_id: catData
     })
   .then(res => {
-    console.log(res.data)
+    
     return res.data
   })
   .catch(err => {
@@ -161,7 +191,7 @@ export async function toggleFollow(data) {
     "toggleFollow",
     data)
   .then(res => {
-    console.log(res.data)
+    
     return res.data
   })
   .catch(err => {
@@ -181,16 +211,129 @@ export async function editProfile(uploadData) {
   data.append('userDesc', uploadData.userDesc);
   data.append('userId', uploadData.userId);
   data.append('avatarFlag', uploadData.avatarFlag);
+  if(uploadData.avatar)
   data.append('avatar',
   {
       uri: uploadData.avatar?uploadData.avatar:"none avatar",
       name:'userProfile.jpg',
       type: 'image/jpg', 
   });
-
-  console.log("request api", data)
+  
+  console.log(data)
   const DATA = await Axios.post(
-    "editProfile",
+    "editProfile"+uploadData.avatarFlag,
+    data)
+  .then(res => {
+    return res.data
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+  return DATA
+}
+
+export async function upgradeMembership(tokenId, month, u_id) {
+  var data = new FormData();
+  data.append('api_key', ' admin@1474?');
+  data.append('c_token', tokenId);
+  data.append('expire', month);
+  data.append('u_id', u_id);
+  
+  const DATA = await Axios.post(
+    "upgradeMembership",
+    data)
+  .then(res => {
+    return res.data
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+  return DATA
+}
+
+export async function getFollowers(u_id) {
+  var data = new FormData();
+  data.append('api_key', ' admin@1474?');
+  data.append('u_id', u_id);
+  
+  const DATA = await Axios.post(
+    "getFollowers",
+    data)
+  .then(res => {
+    return res.data
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+  return DATA
+}
+
+export async function getFollowings(u_id) {
+  var data = new FormData();
+  data.append('api_key', ' admin@1474?');
+  data.append('u_id', u_id);
+  
+  const DATA = await Axios.post(
+    "getFollowings",
+    data)
+  .then(res => {
+    return res.data
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+  return DATA
+}
+
+export async function getMessageApi(u_id) {
+  var data = new FormData();
+  data.append('api_key', ' admin@1474?');
+  data.append('u_id', u_id);
+  const DATA = await Axios.post(
+    "getMessage",
+    data)
+  .then(res => {
+    return res.data
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+  return DATA
+}
+
+export async function getPrivateMessage(u_id, client_id) {
+  var data = new FormData();
+  data.append('api_key', ' admin@1474?');
+  data.append('u_id', u_id);
+  data.append('client_id', client_id);
+
+  const DATA = await Axios.post(
+    "getPrivateMessage",
+    data)
+  .then(res => {
+    return res.data
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+  return DATA
+}
+
+export async function searchUserApi(searchTxt, u_id){
+  var data = new FormData();
+  data.append('api_key', ' admin@1474?');
+  data.append('searchTxt', searchTxt);
+  data.append('u_id', u_id);
+  
+
+  const DATA = await Axios.post(
+    "searchUser",
     data)
   .then(res => {
     return res.data

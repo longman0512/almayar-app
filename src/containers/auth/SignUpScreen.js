@@ -59,7 +59,6 @@ export default function SignUpScreen({navigation}) {
       cropperCircleOverlay: true,
       mediaType: 'image',
     }).then((image) => {
-      console.log(image);
       setImageFile(image.path);
       setuImageFile(image);
     });
@@ -72,7 +71,6 @@ export default function SignUpScreen({navigation}) {
       cropperCircleOverlay: true,
       mediaType: 'image',
     }).then((image) => {
-      console.log(image);
       setImageFile(image.path);
       setuImageFile(image);
     });
@@ -82,7 +80,6 @@ export default function SignUpScreen({navigation}) {
     if (checkValid) {
       var data = new FormData();
       data.append('phoneNumber', formatedPhoneNumber);
-      console.log(data);
       setSendCodeLoading(true);
       setVerified(false);
       Axios({
@@ -94,7 +91,6 @@ export default function SignUpScreen({navigation}) {
         },
       })
         .then((res) => {
-          console.log(res.data, 'res data');
           setSendCodeLoading(false);
           if (res.data.status == true) {
             showAlert('success', res.data.msg);
@@ -104,7 +100,6 @@ export default function SignUpScreen({navigation}) {
           return res.data;
         })
         .catch((error) => {
-          console.log(error, 'error');
           alert('Something Error Please contact Admin');
         });
     } else {
@@ -121,7 +116,6 @@ export default function SignUpScreen({navigation}) {
       var data = new FormData();
       data.append('phoneNumber', formatedPhoneNumber);
       data.append('verifyCode', pVerifyCode);
-      console.log(data);
       setVerifyCodeLoading(true);
       Axios({
         method: 'post',
@@ -132,7 +126,6 @@ export default function SignUpScreen({navigation}) {
         },
       })
         .then((res) => {
-          console.log(res.data, 'res data in verify code');
           setVerifyCodeLoading(false);
           if (res.data.status == true) {
             showAlert('success', res.data.msg);
@@ -143,7 +136,6 @@ export default function SignUpScreen({navigation}) {
           return res.data;
         })
         .catch((error) => {
-          console.log(error, 'error');
           alert('Something Error Please contact Admin');
         });
     } else {
@@ -177,7 +169,6 @@ export default function SignUpScreen({navigation}) {
          type: 'image/jpg', 
       });
     var url = imageFile?"SignUpWithAvatar":"SignUp"
-    console.log(url)
     Axios.post(
         "http://192.168.110.121:8000/api/"+url,
         data,
@@ -190,16 +181,10 @@ export default function SignUpScreen({navigation}) {
       }
       )
       .then(res => {
-        // if(res.data.status){
           setUploadState(0)
-          // setImageFile('')
           showAlert("success", "Sign up successed!")
-        // } else {
-        //   showAlert("warning", "Sign up failed, try again")
-        // }
       })
       .catch(err => {
-        console.log(err);
         setUploadState(0)
       });
   };
@@ -217,7 +202,6 @@ export default function SignUpScreen({navigation}) {
         titleContainerStyle={{height: 0}}
         subtitle={alertMsg}
         onRequestClose={() => {
-          console.log('closed');
         }}
         subtitleStyle={{fontSize: 17}}>
         <SCLAlertButton
@@ -268,7 +252,6 @@ export default function SignUpScreen({navigation}) {
           size={100}
           source={imageFile != '' ? {uri: imageFile} : images.avatar}
           onPress={() => {
-            console.log('avatar');
             showDialog();
           }}
         />
@@ -276,7 +259,6 @@ export default function SignUpScreen({navigation}) {
       <View style={Styles.userNameContainer}>
         <TextInput
           style={Styles.nameInput}
-          // secureTextEntry={true}
           placeholder="* UserName"
           placeholderTextColor={colors.textFaded2}
           onChangeText={(txt) => {
@@ -285,20 +267,17 @@ export default function SignUpScreen({navigation}) {
         />
       </View>
       <SafeAreaView style={Styles.phoneNumContainer}>
-        <View>
+        <View style={{width: "75%"}}>
           <PhoneInput
             defaultCode="IQ"
             layout="second"
             ref={phoneInput}
             onChangeFormattedText={(text) => {
-              console.log(text, 'formated text');
               const valid = phoneInput.current?.isValidNumber(text);
-              console.log(valid);
               setCheckValid(valid);
               setFPhoneNumber(text);
             }}
             onChangeText={(text) => {
-              console.log(text, 'phone number');
               setPhoneNumber(text);
             }}
             placeholder={'* Phone Number'}
@@ -468,7 +447,6 @@ const Styles = StyleSheet.create({
     height: 150,
   },
   userNameInput: {
-    // width: "80%",
     marginStart: 10,
     color: 'black',
     width: 250,
@@ -495,7 +473,6 @@ const Styles = StyleSheet.create({
     height: 40,
     width: Dimensions.get('screen').width / 2 - 30,
     justifyContent: 'center',
-    //alignItems: 'center',
     backgroundColor: '#fff',
     marginBottom: 20,
   },
@@ -505,7 +482,6 @@ const Styles = StyleSheet.create({
     borderRadius: 5,
     height: 50,
     justifyContent: 'center',
-    //alignItems: 'center',
     marginStart: 20,
     marginEnd: 20,
     backgroundColor: '#fff',
@@ -518,7 +494,6 @@ const Styles = StyleSheet.create({
     borderRadius: 5,
     height: 50,
     justifyContent: 'center',
-    //alignItems: 'center',
     marginStart: 20,
     marginEnd: 20,
     backgroundColor: '#fff',
@@ -534,7 +509,6 @@ const Styles = StyleSheet.create({
     borderRadius: 5,
     height: 40,
     justifyContent: 'center',
-    //alignItems: 'center',
     marginStart: 20,
     marginEnd: 20,
     backgroundColor: '#fff',
@@ -545,11 +519,11 @@ const Styles = StyleSheet.create({
   },
 
   phoneNumContainer: {
+    overflow: "hidden",
     borderColor: colors.secondary,
     borderWidth: 1,
     borderRadius: 5,
     justifyContent: 'center',
-    //alignItems: 'center',
     height: 50,
     marginStart: 20,
     marginEnd: 20,

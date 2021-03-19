@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Image, StyleSheet, Dimensions} from 'react-native';
+import {View, Image, StyleSheet, Dimensions, Text} from 'react-native';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import images from 'res/images';
 import StoreContext from "../../../context/index";
@@ -10,6 +10,7 @@ import Loading from "../../../components/Loading"
 import { useNavigation } from '@react-navigation/native';
 
 const windowWidth = Dimensions.get('screen').width;
+const windowHeight = Dimensions.get('screen').height;
 
 const data = [
   {key: '1'},
@@ -64,23 +65,15 @@ export default function SearchGrid() {
 
   const navigation = useNavigation();
 
-  const viewProductDetail = (item) => {
-    setLoading(true)
-    setStore({
-      ...store,
-      ProductDetail: item
-    })
-    setLoading(false)
-    navigation.navigate('ProductDetail In Search')
-  }
+  
 
   return (
-    <View>
+    <>
       <Loading loading={loading}/>
       <FlatGrid
         itemDimension={windowWidth / 3 - 5}
         style={{backgroundColor: 'rgb(242,242,242)'}}
-        data={typeof store.filteredProducts!='undefined'?store.filteredProducts:[]}
+        data={store?.searchedProducts}
         spacing={3}
         keyExtractor={()=>{Math.random().toString()}}
         renderItem={({ item }) => (
@@ -94,11 +87,19 @@ export default function SearchGrid() {
                 rate={1.0}
                 onError={videoError}
                 style={Styles.postImg} />:<Image source={{ uri:  item.imgUrl}} style={Styles.postImg} />}
+                <Text style = {Styles.title}>{item.title}</Text>
+                
+            {
+              item.likeCount?<View style={Styles.likeContainer}>
+                <Image source={images.like_full} style={Styles.actionIcons} />
+                <Text style = {Styles.likeText}>{item.likeCount}</Text>
+              </View>:null
+            }
             </TouchableOpacity>
         </View>
         )}
       />
-    </View>
+    </>
   );
 }
 
@@ -110,4 +111,32 @@ const Styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.primary
   },
+  title:{
+    position: 'absolute',
+    top: 2, 
+    right: 3,
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: "rgba(0,0,0, 0.2)",
+    color: colors.primary,
+    fontSize: 18
+  },
+  likeText:{
+    color: colors.primary
+  },
+  actionIcons: {
+    width: 18,
+    height: 18,
+    marginEnd: 10
+  },
+  likeContainer: {
+    position: 'absolute',
+    bottom: 2, 
+    right: 3,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: "rgba(0,0,0, 0.2)",
+  }
 });

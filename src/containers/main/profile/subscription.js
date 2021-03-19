@@ -7,13 +7,15 @@ import { Appbar, Menu, Portal, Card, Title, Dialog, Button, Divider } from 'reac
 const data = [{key: '1'}];
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-import { editProfile } from "../../../utils/API"
+import { upgradeMembership, getProfileInfo } from "../../../utils/API"
 import Loading from "../../../components/Loading"
 import {SCLAlert, SCLAlertButton} from 'react-native-scl-alert';
 import StoreContext from "../../../context/index";
-import stripe from 'react-native-stripe-payments';
+import Stripe from 'react-native-stripe-api';
+import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
 
-stripe.setOptions({ publishingKey: 'pk_test_51IPvrnIAaIJ9dA25wOEBraCmlnC5wvRVlhji81uUEAatYTa9xmL7d9VTzJXcO3t5Hygt2b8fZjIRekXcTi4rRsOb0070y6LOUk' });
+const apiKey = 'sk_test_51IPvrnIAaIJ9dA25lOk4dDB0RRLvkDYb1LF9pITxtcl67oiVpoHA3tycYgnUn01SDHmg8VAIzhOUaDfxV7JpMN4X00Odeh68UU';
+const client = new Stripe(apiKey);
 
 export default function subscription() {
   const  { store, setStore } = React.useContext(StoreContext);
@@ -25,13 +27,7 @@ export default function subscription() {
   const [alertMsg, setAlertMSG] = React.useState('');
 
   const [payAmount, setPayAmount] = React.useState(0);
-
-  const cardDetails = {
-    number: '4242424242424242',
-    expMonth: 10,
-    expYear: 21,
-    cvc: '888',
-  }
+  const [cardInfo, setCardInfo] = React.useState(0);
 
   const hideDialog = () => {
     setModal(false);
@@ -41,36 +37,49 @@ export default function subscription() {
     setModal(true);
   };
   
-  const checkValid = () =>{
-    const isCardValid = stripe.isCardValid({
-      number: '4242424242424242',
-      expMonth: 10,
-      expYear: 21,
-      cvc: '888',
-    });
-    if(isCardValid){
-      payNow()
+  const checkValid = async () =>{
+    if(cardInfo.status.cvc == "valid" && cardInfo.status.expiry == 'valid' && cardInfo.status.number == "valid"){
+      setLoading(true)
+      const token = await client.createToken({
+        number: cardInfo.values.number,
+        exp_month: cardInfo.values.expiry[0]+cardInfo.values.expiry[1], 
+        exp_year: cardInfo.values.expiry[3]+cardInfo.values.expiry[4], 
+        cvc: cardInfo.values.cvc,
+     });
+     
+     upgradeMembership(token.id, payAmount, store.userInfo).then(res=>{
+       setTimeout(()=>{
+          setLoading(false)
+        }, 300)
+       getProfileInfo(store.userInfo).then(res=>{
+        setStore({
+          ...store,
+          userProfile: res.data,
+        })
+        setTimeout(()=>{
+          setLoading(false)
+        }, 300)
+      })
+       if(res.status){
+        showAlert('success', res.msg)
+       } else {
+        showAlert('warning', res.msg)
+       }
+     })
     } else {
-      console.log("card is not valid")
+      showAlert('warning', "Please check card info, it is invalid")
     }
+    
   }
   const payNow = () => {
 
-    stripe.confirmPayment('client_secret_from_backend', cardDetails)
-    .then(result => {
-      // result of type PaymentResult
-      console.log(result)
-    })
-    .catch(err =>
-      // error performing payment
-      console.log(catch)
-    )
   }
 
   const updateMembership = (amount, monthes) => {
-    setPayAmount(amount)
+    setPayAmount(monthes)
     showDialog()
   }
+
   const showAlert = (type, msg) => {
     setAlertType(type);
     setAlertMSG(msg);
@@ -80,20 +89,41 @@ export default function subscription() {
   return (
     <View style={{width: windowWidth, height: windowHeight, justifyContent: "center", alignItems: "center"}}>
       <Loading loading={loading}/>
+      <SCLAlert
+        theme={alertType}
+        show={alertFlag}
+        title="Al Mayar"
+        titleContainerStyle={{height: 0}}
+        subtitle={alertMsg}
+        onRequestClose={() => {
+          console.log('closed');
+        }}
+        subtitleStyle={{fontSize: 17}}>
+        <SCLAlertButton
+          theme={alertType}
+          onPress={() => {
+            setAlertFlag(false);
+          }}>
+          OK
+        </SCLAlertButton>
+      </SCLAlert>
       <Portal>
         <Dialog
           visible={modal}
           onDismiss={hideDialog}
-          style={{width: (windowWidth - 50), marginHorizontal: (windowWidth - (windowWidth-50)) / 2}}>
+          style={{width: (windowWidth - 50), height: windowHeight-200, marginHorizontal: (windowWidth - (windowWidth-50)) / 2}}>
           {/* <Dialog.Content> */}
           <Card>
-            <Card.Content style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-around"}}>
-              <Button icon="check" mode="contained" style={{marginHorizontal: 10}} color={colors.primary} onPress={checkValid} labelStyle={{color: "white"}}>
-                Pay
-              </Button>
-              <Button mode="outlined" style={{marginHorizontal: 10}} color={colors.primary} onPress={hideDialog} labelStyle={{color: colors.primary}}>
-                Cancel
-              </Button>
+            <Card.Content style={{flexDirection: 'column', alignItems: 'center', justifyContent: "space-around"}}>
+              <CreditCardInput onChange={(d)=>{setCardInfo(d)}} style={{height: 200}}/>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: "space-around"}}>
+                <Button icon="check" mode="contained" style={{marginHorizontal: 10}} color={colors.primary} onPress={checkValid} labelStyle={{color: "white"}}>
+                  Pay
+                </Button>
+                <Button mode="outlined" style={{marginHorizontal: 10}} color={colors.primary} onPress={hideDialog} labelStyle={{color: colors.primary}}>
+                  Cancel
+                </Button>
+              </View>
             </Card.Content>
           </Card>
         </Dialog>

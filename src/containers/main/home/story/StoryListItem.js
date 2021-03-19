@@ -1,30 +1,25 @@
 /* eslint-disable */
 import React from 'react';
 import {View, Image, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
-import { Overlay } from 'react-native-elements'
 import LinearGradient from 'react-native-linear-gradient';
 import colors from '../../../../res/colors';
 import { getProfileInfo } from '../../../../utils/API';
 import StoreContext from "../../../../context/index";
 import { useNavigation } from '@react-navigation/native';
 import { ActivityIndicator } from 'react-native-paper';
+import Loading from "../../../../components/Loading"
 
 export default function StoryListItem({item, storyOnPress}) {
-  console.log(item)
   const navigation = useNavigation();
   const  { store, setStore } = React.useContext(StoreContext);
   const [loading, setLoading] = React.useState(false);
 
   const viewProfile = (user)=>{
-    // console.log(typeof user)
     setLoading(true)
-    // if(store.userInfo == user){
-    //   getUserInfo(user).then(res=>{
-
-    //   })
-    // }
     getProfileInfo(user).then(res=>{
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
       if(res.status){
         setStore({
           ...store,
@@ -43,9 +38,7 @@ export default function StoryListItem({item, storyOnPress}) {
   }
   return (
     <View style={Styles.container}>
-      <Overlay isVisible={loading}>
-        <ActivityIndicator animating={true} />
-      </Overlay>
+      <Loading loading={loading}/>
       <TouchableOpacity onPress={()=>{viewProfile(item.u_id)}}>
         <LinearGradient
           colors={[colors.primary, colors.secondary, colors.primary]}

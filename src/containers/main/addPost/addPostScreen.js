@@ -5,7 +5,7 @@ import images from '../../../res/images';
 import { Card, Button, Dialog, Portal } from 'react-native-paper';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import ModalDropdown from 'react-native-modal-dropdown';
-import { getCategories, addProductApi } from "../../../utils/API"
+import { getCategories, addProductApi, getProfileInfo } from "../../../utils/API"
 import Loading from "../../../components/Loading"
 import ImagePicker from 'react-native-image-crop-picker';
 import StoreContext from "../../../context/index";
@@ -47,8 +47,9 @@ export default function addPostScreen() {
   React.useEffect(()=>{
     setLoading(true)
     getCategories().then(res=>{
-      setLoading(false)
-      console.log(res)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
       if(res?.data?.length){
         var temp = []
         res.data.map((cat, index)=>{
@@ -83,7 +84,6 @@ export default function addPostScreen() {
       // cropperCircleOverlay: true,
       mediaType: 'any',
     }).then((image) => {
-      console.log(image);
       setImageFile(image);
     });
   };
@@ -95,7 +95,6 @@ export default function addPostScreen() {
       // cropperCircleOverlay: true,
       mediaType: 'any',
     }).then((image) => {
-      console.log(image);
       setImageFile(image);
     });
   };
@@ -109,6 +108,7 @@ export default function addPostScreen() {
   };
 
   const addProduct = ()=> {
+    setLoading(true)
     addProductApi({
       category: selCat,
       pro_name: proName,
@@ -121,14 +121,37 @@ export default function addPostScreen() {
       valid_from: startDate,
       valid_to: endDate
     }).then((res)=>{
-      console.log(res, "data from api")
+      
+
       if(!res.status){
         showAlert('warning', res.msg)
+        setTimeout(()=>{
+          setLoading(false)
+        }, 300)
       } else {
-        showAlert('success', res.msg)
-        setProName('')
-        setProPrice(null)
+        getProfileInfo(store.userInfo).then(result=>{
+          setStore({
+            ...store,
+            userProfile: result.data
+          })
+          setTimeout(()=>{
+            setLoading(false)
+          }, 300)
+          setProName('')
+          setProPrice(null)
+          setProDescription('')
+          setImageFile("")
+          selectDiscoutType("fixed")
+          setDisAmount(0)
+          setStartFlag(false)
+          setEndFlag(false)
+          showAlert('success', res.msg)
+        })
       }
+    }).catch(err=>{
+      setTimeout(()=>{
+        setLoading(false)
+      }, 300)
     })
   }
 
@@ -139,9 +162,7 @@ export default function addPostScreen() {
   };
 
   const changeRange = (d) => {
-    console.log(d)
     const { startDate, endDate, date } = d;
-    console.log( startDate, endDate, date)
     if(typeof startDate != 'undefined' && startDate){
       setStartDate(startDate)
     }
@@ -176,7 +197,6 @@ export default function addPostScreen() {
         titleContainerStyle={{height: 0}}
         subtitle={alertMsg}
         onRequestClose={() => {
-          console.log('closed');
         }}
         subtitleStyle={{fontSize: 17}}>
         <SCLAlertButton
@@ -252,13 +272,13 @@ export default function addPostScreen() {
         showsVerticalScrollIndicator={false}
       >
         {
-          imageFile==""?<Card style={{marginBottom: 20, height: 200, width: (windowWidth-30), flexDirection: "row", justifyContent: "center", alignItems: "center"}} onPress={()=>{console.log("month"); showDialog(true)}}>
+          imageFile==""?<Card style={{marginBottom: 20, height: 200, width: (windowWidth-30), flexDirection: "row", justifyContent: "center", alignItems: "center"}} onPress={()=>{showDialog(true)}}>
           <Card.Content>
             <View style={Styles.btnTextContainer}>
               <Text style={Styles.btnText}>Image/Video</Text>
             </View>
           </Card.Content>
-          </Card>:<Card style={{marginBottom: 20, height: 200, width: (windowWidth-30), flexDirection: "row", justifyContent: "center", alignItems: "center", padding: 0}} onPress={()=>{console.log("month"); setImageFile("")}}>
+          </Card>:<Card style={{marginBottom: 20, height: 200, width: (windowWidth-30), flexDirection: "row", justifyContent: "center", alignItems: "center", padding: 0}} onPress={()=>{setImageFile("")}}>
             {
               imageFile?.mime.indexOf('vide')>=0?<Video source={{uri: imageFile.path}}
               onBuffer={videoBuffer}
@@ -287,6 +307,7 @@ export default function addPostScreen() {
             style={Styles.textInputContainer}
             placeholder={"Product Name"}
             onChangeText = {(txt)=>{setProName(txt)}}
+            value={proName}
           />
         </View>
         <View style={Styles.groupContainer}>
@@ -297,6 +318,7 @@ export default function addPostScreen() {
               style={Styles.priceInputContainer}
               placeholder={"Price"}
               onChangeText = {(txt)=>{setProPrice(txt)}}
+              value={proPrice}
             />
             <Text style={{position: 'absolute', left: 5, top: 7, fontSize: 16, color: "gray"}}>$</Text>
           </View>
@@ -313,6 +335,7 @@ export default function addPostScreen() {
             placeholder={"Description"}
             multiline
             onChangeText = {(txt)=>{setProDescription(txt)}}
+            value={proDescription}
           />
         </View>
         <View style={{flexDirection: "row", justifyContent: 'space-between', width: (windowWidth-45)}}>
@@ -337,6 +360,7 @@ export default function addPostScreen() {
                   style={Styles.discountInputContainer}
                   placeholder={"Amount"}
                   onChangeText = {(txt)=>{setDisAmount(txt)}}
+                  value={discountAmount}
                 />
                 <Text style={{position: 'absolute', left: 5, top: 7, fontSize: 16, color: "gray"}}>{discountType=="Fixed"?'$':'%'}</Text>
               </View>

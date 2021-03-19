@@ -6,9 +6,9 @@ import colors from '../../../../res/colors';
 import images from '../../../../res/images';
 import StoreContext from "../../../../context/index";
 import { toggleLike } from '../../../../utils/API';
-import { Overlay } from 'react-native-elements'
 import { ActivityIndicator } from 'react-native-paper';
 import Video from 'react-native-video';
+import Loading from "../../../../components/Loading"
 
 const data = [{key: '1'}];
 const post = {
@@ -41,7 +41,6 @@ export default function productDetailscreen() {
   const [loading, setLoading] = React.useState(false);
 
   const product = store.ProductDetail
-  console.log(product, "product")
   React.useEffect(()=>{
     store.ProductDetail.likes.map((item, index)=>{
       if(!likIcon)
@@ -82,16 +81,16 @@ export default function productDetailscreen() {
         ...store,
         products: temp
       })
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
     })
   }
   var videoBuffer = ''
   var videoError = ''
   return (
     <>
-    <Overlay isVisible={loading}>
-        <ActivityIndicator animating={true} />
-      </Overlay>
+    <Loading loading={loading}/>
     <FlatList
       style={{flex: 1, backgroundColor: colors.bottomBackGround}}
       data={data}
@@ -104,7 +103,7 @@ export default function productDetailscreen() {
                 repeat
                 rate={1.0}
                 onError={videoError}
-                style={Styles.postImg} />:<Image source={{uri: store.ProductDetail.imgUrl}} style={Styles.postImg} />
+                style={Styles.postVid} />:<Image source={{uri: store.ProductDetail.imgUrl}} style={Styles.postImg} />
               }
             {/* <Image source={{uri: store.ProductDetail.imgUrl}} style={Styles.postImg} /> */}
             {/* {
@@ -162,12 +161,17 @@ export default function productDetailscreen() {
 }
 
 const Styles = StyleSheet.create({
-    postImg: {
-      height: Dimensions.get('screen').height / 3,
-      width: Dimensions.get('screen').width,
-      resizeMode: 'cover',
-      marginTop: 20
-    },
+  postVid: {
+    height: Dimensions.get('screen').height / 3,
+    width: Dimensions.get('screen').width,
+    marginTop: 20
+  },
+  postImg: {
+    height: Dimensions.get('screen').height / 3,
+    width: Dimensions.get('screen').width,
+    resizeMode: 'cover',
+    marginTop: 20
+  },
     actionIcons: {
         width: 23,
         height: 23,

@@ -7,7 +7,7 @@ import images from '../../../../res/images';
 import StoreContext from "../../../../context/index";
 import { Card, Button, Dialog, Portal } from 'react-native-paper';
 import symbolicateStackTrace from 'react-native/Libraries/Core/Devtools/symbolicateStackTrace';
-import { toggleFollow } from '../../../../utils/API';
+import { toggleFollow, getProfileInfo } from '../../../../utils/API';
 import Loading from "../../../../components/Loading"
 
 export default function ProfileHeader() {
@@ -16,7 +16,6 @@ export default function ProfileHeader() {
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(()=>{
-    console.log(store.userInfo)
     var flag = false
     store.publicUserInfo.followers.map((follower, index)=>{
       if(follower.follower_id == store.userInfo){
@@ -35,10 +34,11 @@ export default function ProfileHeader() {
         follower_id: store.userInfo,
         flag: flag
       }).then(res=>{
-        setStore({
-          ...store,
-          publicUserInfo: res.data
-        })
+        // setStore({
+        //   ...store,
+        //   publicUserInfo: res.data
+        // })
+        var temp = res.data
         var flag = false
         res.data.followers.map((follower, index)=>{
           if(follower.follower_id == store.userInfo){
@@ -47,7 +47,16 @@ export default function ProfileHeader() {
         })
         if(flag)setFollowing(true)
         else setFollowing(false)
-        setLoading(false)
+        setTimeout(()=>{
+          setLoading(false)
+        }, 300)
+        getProfileInfo(store.userInfo).then(res=>{
+          setStore({
+            ...store,
+            publicUserInfo: temp,
+            userProfile: res.data
+          })
+        })
       })
   }
   return (
@@ -93,9 +102,9 @@ export default function ProfileHeader() {
           </View>
         </View>
         {
-          following?<Button mode="contained" color={'#FFF'} onPress={() => console.log("follow")} labelStyle={{color: colors.primary}} style={{marginTop: 30}} onPress={()=>{followToggleAction('unfollow')}}>
+          following?<Button mode="contained" color={'#FFF'} labelStyle={{color: colors.primary}} style={{marginTop: 30}} onPress={()=>{followToggleAction('unfollow')}}>
             UnFollow
-          </Button>:<Button mode="contained" color={colors.primary} onPress={() => console.log("follow")} labelStyle={{color: "white"}} style={{marginTop: 30}} onPress={()=>{followToggleAction('follow')}}>
+          </Button>:<Button mode="contained" color={colors.primary} labelStyle={{color: "white"}} style={{marginTop: 30}} onPress={()=>{followToggleAction('follow')}}>
             Follow
           </Button>
         }

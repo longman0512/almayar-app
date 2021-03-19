@@ -29,9 +29,8 @@ export default function homeScreen({navigation}) {
 
   const storyOnPress = () => navigation.navigate('UserProfile');
 
-  const posts = store.products;
+  const posts = store.product
   const stories = store.topUsers
-  
   const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
     const paddingToBottom = 20;
     return layoutMeasurement.height + contentOffset.y >=
@@ -46,12 +45,11 @@ export default function homeScreen({navigation}) {
   };
 
   const getNextPage = () => {
-    console.log("get next")
-    console.log(store.cur_page)
     setLoading(true)
     getNextPageApi(Number(store.cur_page)+1).then((res)=>{
-      console.log(res)
-      setLoading(false)
+      setTimeout(()=>{
+          setLoading(false)
+        }, 300)
       if(res.data.products.length)
       setStore({
         ...store,
@@ -62,12 +60,12 @@ export default function homeScreen({navigation}) {
   };
 
   const getPrevPage = () => {
-    console.log("get pev")
-    console.log(store.cur_page)
     if(!(store.cur_page - 1 < 0)){
       setLoading(true)
       getNextPageApi(Number(store.cur_page)-1).then((res)=>{      
-        setLoading(false)
+        setTimeout(()=>{
+          setLoading(false)
+        }, 300)
         setStore({
           ...store,
           products: res.data.products,
@@ -80,16 +78,9 @@ export default function homeScreen({navigation}) {
 
   return (
     <SafeAreaView style={{backgroundColor: colors.background}}>
-      <Loading loading={loading}/>
+      <Loading loading={loading || store.loading?true:false}/>
       <ScrollView
-        onScrollBeginDrag={()=>{
-          console.log("Drag start")
-        }}
-        onScroll={()=>{
-          console.log("on scroll")
-        }}
         onScrollEndDrag={({nativeEvent})=>{
-          console.log("drag end")
           if (isCloseToBottom(nativeEvent)) {
             getNextPage()
           }
@@ -99,11 +90,10 @@ export default function homeScreen({navigation}) {
         }}
         scrollEventThrottle={400}
       >
-
       <StoryContainer stories={stories} storyOnPress={storyOnPress} />
       <View style={{minHeight: windowHeight*1.5}}>
       {
-        posts.map((item, index)=>{
+        store?.products?.map((item, index)=>{
           return <Post key={Math.random().toString()} post={item} />
         })
       }
@@ -111,16 +101,5 @@ export default function homeScreen({navigation}) {
         
       </ScrollView>
     </SafeAreaView>
-    // <FlatList
-    //   style={{backgroundColor: colors.background}}
-    //   data={posts}
-    //   ListHeaderComponent={() => (
-    //     <StoryContainer stories={stories} storyOnPress={storyOnPress} />
-    //   )}
-    //   onEndReached={()=>{console.log("end")}}
-    //   renderItem={({item, index}) => (
-    //     <Post key={Math.random().toString()} post={item} />
-    //   )}
-    // />
   );
 }

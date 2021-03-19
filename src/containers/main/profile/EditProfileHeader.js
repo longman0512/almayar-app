@@ -30,7 +30,6 @@ export default function EditProfileHeader({avatar, setAvatar}) {
       cropperCircleOverlay: true,
       mediaType: 'image',
     }).then((image) => {
-      console.log(image)
       setImageFile(image);
       setAvatar(image)
     });
@@ -44,7 +43,6 @@ export default function EditProfileHeader({avatar, setAvatar}) {
       cropperCircleOverlay: true,
       mediaType: 'image',
     }).then((image) => {
-      console.log(image)
       setImageFile(image);
       setAvatar(image)
     });
@@ -114,7 +112,7 @@ export default function EditProfileHeader({avatar, setAvatar}) {
         </TouchableOpacity>}>
         <Menu.Item onPress={() => {setVisible(false); showDialog(); }} title="Edit" />
         <Divider />
-        <Menu.Item onPress={() => {changeAvatar("")}} title="Remove" />
+        <Menu.Item onPress={() => {changeAvatar(false)}} title="Remove" />
       </Menu>
     </View>
   );

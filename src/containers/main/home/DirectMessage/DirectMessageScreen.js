@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Image, Text} from 'react-native';
+import {View, SafeAreaView, ScrollView} from 'react-native';
 import DirectMessageSearch from './DirectMessageSearch';
 import Title from './Title';
 import MessagesList from './MessagesList';
@@ -12,18 +12,9 @@ const data = [{key: '1'}];
 export default function DirectMessageScreen({navigation}) {
   return (
     <>
-      <FlatList
-        style={{backgroundColor: "white", flex: 1}}
-        data={data}
-        renderItem={() => (
-          <>
-            <DirectMessageSearch />
-            <Title />
-            <MessagesList navigation = {navigation}/>
-          </>
-        )}
-      />
-      
+      <DirectMessageSearch />
+      <Title />
+      <MessagesList navigation = {navigation}/>
     </>
   );
 }
