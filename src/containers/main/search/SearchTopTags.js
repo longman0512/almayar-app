@@ -21,7 +21,7 @@ function TagContainer({tag, selCat, selectCat}) {
     <TouchableOpacity onPress={() => {
       selectCat(tag)
 
-    }} style={{height: "100%"}}>
+    }} style={{height: 70}}>
       <View
         style={selCat?selCat.key == tag.key?Styles.selectedCategoryBtn:Styles.categoryBtn:Styles.categoryBtn}>
         <Text
@@ -74,6 +74,7 @@ export default function SearchTopTags({catData, searchTxt}) {
     setLoading(true)
     if(catData.length)
     getAllProducts(catData[0].id).then(res=>{
+      console.log("get products")
       setProducts(res.data)
       setFiltered(res.data)
       setStore({
@@ -101,19 +102,21 @@ export default function SearchTopTags({catData, searchTxt}) {
 
   return (
     <>
-    <FlatList
-      horizontal={true}
-      showsHorizontalScrollIndicator={false}
-      style={{backgroundColor: colors.bottomBackGround, height: 60}}
-      data={catData}
-      renderItem={({item, index}) => <TagContainer selectCat={setSelCategory} tag={item} selCat={selectedCategory} />}
-    />
+    <View style={{height: 50}}>
+      <FlatList
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        style={{backgroundColor: colors.bottomBackGround}}
+        data={catData}
+        renderItem={({item, index}) => <TagContainer selectCat={setSelCategory} tag={item} selCat={selectedCategory} />}
+      />
+    </View>
     {
       loading?<ActivityIndicator animating={true} color="#e59c11" style={{backgroundColor: "white", padding: 5, borderRadius: 3, position: "absolute", top: 200, right: windowWidth/2-8}}/>:null
     }
     {
       !loading?<FlatList
-          style={{backgroundColor: 'rgb(242,242,242)', width: "100%", height: windowHeight-120}}
+          style={{backgroundColor: 'rgb(242,242,242)', width: "100%"}}
           data={filtered}
           numColumns={3}
           renderItem={({ item }) => (
@@ -140,7 +143,6 @@ export default function SearchTopTags({catData, searchTxt}) {
           )}
         />:null
     }
-    
     </>
   );
 }

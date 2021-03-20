@@ -84,6 +84,7 @@ const Styles = StyleSheet.create({
     color: colors.text,
     marginStart: 10,
     fontWeight: 'bold',
+    fontFamily: 'Lato Black'
   },
   placeName: {
     color: colors.text,

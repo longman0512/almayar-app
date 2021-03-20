@@ -16,16 +16,16 @@ const data = [{key: '1'}];
 export default function usersettingscreen() {
   return (
     <Provider>
-    <FlatList
-      style={{flex: 1, backgroundColor: colors.bottomBackGround}}
-      data={data}
-      renderItem={() => (
-        <>
-          <UserSettingHeader />
-          <UserSettingBio />
-        </>
-      )}
-    />
+      <FlatList
+        style={{flex: 1, backgroundColor: colors.bottomBackGround}}
+        data={data}
+        renderItem={() => (
+          <>
+            <UserSettingHeader />
+            {/* <UserSettingBio /> */}
+          </>
+        )}
+      />
     </Provider>
   );
 }

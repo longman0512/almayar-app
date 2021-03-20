@@ -1,6 +1,6 @@
 import MainNavigator from './src/containers/main/MainNavigator';
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 
 console.disableYellowBox = true;
 

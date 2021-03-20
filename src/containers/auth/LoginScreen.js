@@ -26,7 +26,7 @@ import StoreContext from "../../context/index";
 
 export default function LoginScreen({navigation}) {
   const  { store, setStore } = useContext(StoreContext);
-  const [phoneNumber, setPhoneNumber] = React.useState("+9647755526199")
+  const [phoneNumber, setPhoneNumber] = React.useState("+9647755526119")
   const [pwd, setPwd] = React.useState("123")
   const [loading, setLoading] = React.useState(false)
   const [alertFlag, setAlertFlag] = React.useState(false);
@@ -108,11 +108,11 @@ export default function LoginScreen({navigation}) {
           placeholderTextColor={colors.textFaded2}
           onChangeText = {(txt)=>{setPwd(txt)}}
           secureTextEntry={true}
-          value={'123'}
+          value={pwd}
         />
       </View>
       <View style={Styles.forgotPasswordContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>{navigation.navigate("Forgot")}}>
           <Text style={Styles.forgotPasswordText}>Forgot password?</Text>
         </TouchableOpacity>
       </View>

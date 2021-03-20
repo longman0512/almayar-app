@@ -1,8 +1,10 @@
 import React from 'react';
-import {View, Dimensions, TextInput} from 'react-native';
+import {View, Dimensions, TextInput, KeyboardAvoidingView } from 'react-native';
 import palette from 'res/palette';
 import {WebView} from 'react-native-webview';
 import {RNCamera} from 'react-native-camera';
+import { ActivityIndicator } from 'react-native-paper';
+
 import SearchGrid from './SearchGrid';
 import SearchTopTags from './SearchTopTags';
 import { getCategories, getAllProducts } from "../../../utils/API"
@@ -11,6 +13,7 @@ import Loading from "../../../components/Loading"
 import colors from '../../../res/colors';
 
 const windowHeight = Dimensions.get('screen').height;
+const windowWidth = Dimensions.get('screen').width;
 
 export default function searchScreen() {
   const  { store, setStore } = React.useContext(StoreContext);
@@ -23,6 +26,7 @@ export default function searchScreen() {
   React.useEffect(()=>{
     setLoading(true)
     getCategories().then(res=>{
+      console.log(res.data)
       if(res?.data?.length){
         var temp = []
         res.data.map((cat, index)=>{
@@ -45,11 +49,18 @@ export default function searchScreen() {
   const filterData = (txt)=> {
     setSearchTxt(txt)
   }
+
   return (
-    <View style={{backgroundColor: '#FFF', flex: 1}}>
+    <KeyboardAvoidingView style={{backgroundColor: '#FFF', flex: 1}}>
       {/* <Loading loading={loading}/> */}
-      <View style={{paddingHorizontal: 5, paddingVertical: 10, backgroundColor: colors.bottomBackGround,
-            shadowColor: 'transparent', height: 60}}>
+      <View style={{
+        paddingHorizontal: 5,
+        paddingVertical: 10,
+        backgroundColor: colors.bottomBackGround,
+        shadowColor: 'transparent',
+        height: 60,
+        zIndex: 10
+      }}>
         <TextInput
           placeholder="Search"
           placeholderTextColor={colors.textFaded2}
@@ -72,6 +83,7 @@ export default function searchScreen() {
       </View>
       <SearchTopTags catData={category} searchTxt={searchTxt}/>
       {/* <SearchGrid /> */}
-    </View>
+      
+    </KeyboardAvoidingView>
   );
 }

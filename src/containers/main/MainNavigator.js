@@ -12,6 +12,7 @@ import MessageScreen from './home/MessageScreen/MessageScreen';
 import SplashScreen from '../auth/SplashScreen'
 import SignUpScreen from '../auth/SignUpScreen'
 import LoginScreen from '../auth/LoginScreen'
+import ForgotScreen from '../auth/ForgotScreen'
 import StoreContext from '../../context/index'
 
 export default function MainNavigator({navigation}) {
@@ -44,6 +45,16 @@ export default function MainNavigator({navigation}) {
       <Stack.Screen
         name="Login"
         component={LoginScreen}
+        options={{
+          headerStyle: {backgroundColor: '#000'},
+          headerTintColor: '#fff',
+          headerTransparent: true,
+          title: '',
+        }}
+      />
+      <Stack.Screen
+        name="Forgot"
+        component={ForgotScreen}
         options={{
           headerStyle: {backgroundColor: '#000'},
           headerTintColor: '#fff',
