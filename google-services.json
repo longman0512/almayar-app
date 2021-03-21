@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "780290061345",
+    "project_id": "al-mayar",
+    "storage_bucket": "al-mayar.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:780290061345:android:35bfe772663b8d55601f60",
+        "android_client_info": {
+          "package_name": "com.almayar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "780290061345-0bkk8b98uajl8gkej36tku1lks6e195p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyC130SC8X5faww2gSplxHOqmb4jH9TzI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "780290061345-0bkk8b98uajl8gkej36tku1lks6e195p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
